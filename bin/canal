@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+Signal.trap('INT') { exit 1 }
+
+# resolve bin path, ignoring symlinks
+require 'pathname'
+bin_file = Pathname.new(__FILE__).realpath
+
+# add self to libpath
+$LOAD_PATH.unshift File.expand_path("../../lib", bin_file)
+
+require "canals/cli"
+
+Canals::CLI.start(ARGV)

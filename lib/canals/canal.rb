@@ -2,7 +2,7 @@ module Canals
   class Canal
     DEFAULT_OPTS = {host: "nat.aws.example.com", user: "ec2-user", local_address: "localhost"}
 
-    def tunnel
+    def create_tunnel
       pid = Process.spawn(tunnel_command({remote_host: "mysql-db", remote_port: 3306, local_port: 3307}))
       puts "ssh pid: #{pid}"
     end
