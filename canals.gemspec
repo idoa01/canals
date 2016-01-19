@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.require_path          = ["lib"]
 
   s.add_dependency        'thor', '~> 0.19.1'
+  s.add_dependency        'terminal-table'
 
   s.add_development_dependency 'rspec', '~> 3.4'
 end

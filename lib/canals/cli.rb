@@ -10,20 +10,17 @@ module Canals
     method_option :host, :type => :string, :desc => "The proxy host we will use to connect through"
     method_option :user, :type => :string, :desc => "The user for the ssh proxy host"
     def create(name, remote_host, remote_port, local_port=nil)
-      #local_port = remote_port if local_port.nil?
-      #remote_port = remote_port.to_i
-      #local_port = local_port.to_i
-
-      puts "name: #{name.inspect}"
-      puts "remote_host: #{remote_host.inspect}"
-      puts "remote_port: #{remote_port.inspect}"
-      puts "local_port: #{local_port.inspect}"
-      puts "options: #{options.inspect}"
-
-
       opts = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}.merge(options)
       opts = Canals::CanalOptions.new(opts)
       Canals::Canal.new.create_tunnel(opts)
+    end
+
+    desc "repo", "show the available tunnels"
+    def repo
+      require 'terminal-table'
+      rows = Canals.repository.map{ |name, conf| [conf["name"], conf["remote_host"], conf["remote_port"], conf["local_port"]] }
+      table = Terminal::Table.new :headings => ['Name', 'Remote Host', 'Remote Port', 'Local Port'], :rows => rows
+      puts table
     end
 
   end

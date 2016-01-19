@@ -3,6 +3,7 @@ require 'forwardable'
 
 module Canals
   class Repository
+    include Enumerable
     extend Forwardable
 
     def initialize(root = nil)
@@ -10,7 +11,11 @@ module Canals
       @repo = load_repository(repo_file)
     end
 
-    def_delegator :@config, :[]
+    def_delegator :@repo, :[]
+
+    def each(&block)
+      @repo[:tunnels].each(&block)
+    end
 
     def add(options, save=true)
       @repo[:tunnels][options.name] = options.to_hash
@@ -33,9 +38,8 @@ module Canals
 
     def load_repository(repository_file)
       valid_file = repository_file && repository_file.exist? && !repository_file.size.zero?
-      Canals.logger.debug "repository_file? #{valid_file}"
       return { tunnels: {} } if !valid_file
-      return Psych.load(valid_file)
+      return Psych.load_file(repository_file)
     end
 
   end

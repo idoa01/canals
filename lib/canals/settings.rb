@@ -19,9 +19,8 @@ module Canals
 
     def load_config(config_file)
       valid_file = config_file && config_file.exist? && !config_file.size.zero?
-      Canals.logger.debug "config_file? #{valid_file}"
       return {} if !valid_file
-      return Psych.load(valid_file)
+      return Psych.load_file(config_file)
     end
 
   end
