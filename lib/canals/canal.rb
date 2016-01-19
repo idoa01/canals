@@ -3,9 +3,7 @@ module Canals
     DEFAULT_OPTS = {hostname: "nat.aws.example.com", user: "ec2-user", bind_address: "localhost"}
 
     def create_tunnel(tunnel_opts)
-      puts tunnel_command(tunnel_opts)
-      #pid = Process.spawn(tunnel_command(tunnel_opts))
-      #puts "ssh pid: #{pid}"
+      Canals.repository.add tunnel_opts
     end
 
     private

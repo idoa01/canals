@@ -6,6 +6,7 @@ module Canals
   extend self
 
   autoload :Settings, "canals/settings"
+  autoload :Repository, "canals/repository"
 
 
   attr_accessor :logger
@@ -13,6 +14,11 @@ module Canals
   def settings
     return @settings if defined?(@settings)
     @settings = Settings.new(File.join(Dir.home, '.canals'))
+  end
+
+  def repository
+    return @repository if defined?(@repository)
+    @repository = Repository.new
   end
 end
 

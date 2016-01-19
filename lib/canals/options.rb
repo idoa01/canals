@@ -4,9 +4,10 @@ module Canals
   class CanalOptionError < StandardError; end
 
   class CanalOptions
-    attr_reader :remote_host, :remote_port, :local_port
+    attr_reader :name, :remote_host, :remote_port, :local_port
     def initialize(args)
       @args = validate?(args)
+      @name = @args["name"]
       @remote_host = @args["remote_host"]
       @remote_port = @args["remote_port"]
       @local_port = @args["local_port"]
@@ -14,6 +15,7 @@ module Canals
 
     def validate?(args)
       vargs = args.dup
+      raise CanalOptionError.new("Missing option: \"name\" in canal creation") if args["name"].nil?
       raise CanalOptionError.new("Missing option: \"remote_host\" in canal creation") if args["remote_host"].nil?
       raise CanalOptionError.new("Missing option: \"remote_port\" in canal creation") if args["remote_port"].nil?
       vargs["remote_port"] = vargs["remote_port"].to_i
@@ -27,6 +29,10 @@ module Canals
 
     def to_yaml
       Psych.dump(@args)
+    end
+
+    def to_hash
+      @args.dup
     end
 
   end
