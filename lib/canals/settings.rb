@@ -1,12 +1,16 @@
 require 'psych'
+require 'forwardable'
 
 module Canals
   class Settings
+    extend Forwardable
 
     def initialize(root = nil)
       @root = root
       @config = load_config(global_config_file)
     end
+
+    def_delegator :@config, :[]
 
     def global_config_file
       file = File.join(Dir.home, '.canals/config')
