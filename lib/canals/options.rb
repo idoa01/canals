@@ -28,6 +28,11 @@ module Canals
       vargs
     end
 
+    def bind_address
+      return @args["bind_address"] if @args["bind_address"]
+      return "127.0.0.1"
+    end
+
     def hostname
       get_env_var("hostname")
     end

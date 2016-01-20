@@ -1,5 +1,6 @@
 require 'psych'
 require 'forwardable'
+require 'canals/environment'
 
 module Canals
   class Repository
@@ -49,9 +50,11 @@ module Canals
 
     def environment(name)
       if name.nil?
-        return @repo[ENVIRONMENTS].select{ |n,e| e["default"] }.values[0]
+        args = @repo[ENVIRONMENTS].select{ |n,e| e["default"] }.values[0]
+      else
+        args = @repo[ENVIRONMENTS][name]
       end
-      @repo[ENVIRONMENTS][name]
+      Canals::Environment.new(args) if !args.nil?
     end
 
     private

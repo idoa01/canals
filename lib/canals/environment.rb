@@ -3,7 +3,7 @@ require 'psych'
 module Canals
   class CanalOptionError < StandardError; end
 
-  class Enviroment
+  class Environment
     attr_reader :name, :user, :hostname, :pem
     def initialize(args)
       @args = validate?(args)
