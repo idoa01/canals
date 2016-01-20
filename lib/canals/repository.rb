@@ -6,6 +6,9 @@ module Canals
     include Enumerable
     extend Forwardable
 
+    ENVIRONMENTS = :environments
+    TUNNELS = :tunnels
+
     def initialize(root = nil)
       @root = root
       @repo = load_repository(repo_file)
@@ -14,11 +17,26 @@ module Canals
     def_delegator :@repo, :[]
 
     def each(&block)
-      @repo[:tunnels].each(&block)
+      @repo[TUNNELS].each(&block)
     end
 
     def add(options, save=true)
-      @repo[:tunnels][options.name] = options.to_hash
+      @repo[TUNNELS][options.name] = options.to_hash
+      save! if save
+    end
+
+    def get(name)
+      CanalOptions.new(@repo[:tunnels][name])
+    end
+
+    def add_environment(environment, save=true)
+      if environment.is_default?
+        @repo[ENVIRONMENTS].each { |name, env| env.delete("default") }
+      end
+      if @repo[ENVIRONMENTS].empty?
+        environment.default = true
+      end
+      @repo[ENVIRONMENTS][environment.name] = environment.to_hash
       save! if save
     end
 
@@ -27,6 +45,13 @@ module Canals
       File.open(repo_file, 'w') do |file|
         file.write(Psych.dump(@repo))
       end
+    end
+
+    def environment(name)
+      if name.nil?
+        return @repo[ENVIRONMENTS].select{ |n,e| e["default"] }.values[0]
+      end
+      @repo[ENVIRONMENTS][name]
     end
 
     private
@@ -38,7 +63,7 @@ module Canals
 
     def load_repository(repository_file)
       valid_file = repository_file && repository_file.exist? && !repository_file.size.zero?
-      return { tunnels: {} } if !valid_file
+      return { ENVIRONMENTS => {}, TUNNELS => {} } if !valid_file
       return Psych.load_file(repository_file)
     end
 
