@@ -11,4 +11,4 @@ $LOAD_PATH.unshift File.expand_path("../../lib", bin_file)
 
 require "canals/cli"
 
-Canals::CLI.start(ARGV)
+Canals::Cli::Application.start(ARGV)
