@@ -6,12 +6,12 @@ module Canals
     end
 
     def start(tunnel_opts)
-      #pid = Process.spawn(tunnel_command(tunnel_opts))
-      #puts "started ssh on pid #{pid}"
       if tunnel_opts.instance_of? String
         tunnel_opts = Canals.repository.get(tunnel_opts)
       end
-      puts tunnel_command(tunnel_opts)
+      pid = Process.spawn(tunnel_command(tunnel_opts))
+      puts "Created tunnel with pid #{pid}"
+      pid
     end
 
     private
