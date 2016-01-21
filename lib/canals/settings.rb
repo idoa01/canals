@@ -1,4 +1,5 @@
 require 'psych'
+require 'pathname'
 require 'forwardable'
 
 module Canals
