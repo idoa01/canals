@@ -19,7 +19,7 @@ module Canals
     def_delegator :@repo, :[]
 
     def each(&block)
-      @repo[TUNNELS].each(&block)
+      @repo[TUNNELS].map{ |n, r| Canals::CanalOptions.new(r) }.each(&block)
     end
 
     def add(options, save=true)
@@ -56,6 +56,10 @@ module Canals
         args = @repo[ENVIRONMENTS][name]
       end
       Canals::Environment.new(args) if !args.nil?
+    end
+
+    def environments
+      @repo[ENVIRONMENTS].map { |n, e| Canals::Environment.new(e) }
     end
 
     private

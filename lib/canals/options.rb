@@ -4,14 +4,15 @@ module Canals
   class CanalOptionError < StandardError; end
 
   class CanalOptions
-    attr_reader :name, :remote_host, :remote_port, :local_port, :env
+    attr_reader :name, :remote_host, :remote_port, :local_port, :env_name, :env
     def initialize(args)
       @args = validate?(args)
       @name = @args["name"]
       @remote_host = @args["remote_host"]
       @remote_port = @args["remote_port"]
       @local_port = @args["local_port"]
-      @env = Canals.repository.environment(@args['env'])
+      @env_name = @args['env']
+      @env = Canals.repository.environment(@env_name)
     end
 
     def validate?(args)

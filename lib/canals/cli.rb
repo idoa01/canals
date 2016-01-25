@@ -1,6 +1,7 @@
 require 'canals'
 require 'canals/options'
 require 'canals/environment'
+require 'canals/cli/environment'
 require 'thor'
 
 module Canals
@@ -17,21 +18,8 @@ module Canals
         Canals::Canal.new.create_tunnel(opts)
       end
 
-      desc 'environment NAME HOSTNAME', 'create a new ssh environment'
-      method_option :user,    :type => :string,  :desc => "The user for the ssh proxy host"
-      method_option :pem,     :type => :string,  :desc => "The PEM file location for this environment"
-      method_option :default, :type => :boolean, :desc => "Make this the default enviroment"
-      def environment(name, hostname)
-        user, host = hostname.split("@")
-        if host.nil?
-          host = hostname
-          user = nil
-        end
-        opts = {"name" => name, "hostname" => host}.merge(options)
-        opts["user"] = user if !user.nil?
-        env = Canals::Environment.new(opts)
-        Canals.repository.add_environment(env)
-      end
+      desc "environment", "enviroment related commands"
+      subcommand "environment", Canals::Cli::Environment
 
       desc 'start NAME', 'start tunnel'
       def start(name)
@@ -39,10 +27,19 @@ module Canals
       end
 
       desc "repo", "show the available tunnels"
+      method_option :full, :type => :boolean, :desc => "Show full data on repostitory"
       def repo
         require 'terminal-table'
-        rows = Canals.repository.map{ |name, conf| [conf["name"], conf["remote_host"], conf["remote_port"], conf["local_port"]] }
-        table = Terminal::Table.new :headings => ['Name', 'Remote Host', 'Remote Port', 'Local Port'], :rows => rows
+        require 'canals/core_ext/string'
+        columns = ["name", "remote_host", "remote_port", "local_port"]
+        columns_extra = ["env_name", "bind_address", "user", "hostname"]
+        if options[:full]
+          columns += columns_extra
+        end
+
+        rows = Canals.repository.map{ |conf| columns.map{ |c| conf.send c.to_sym } } #[conf["name"], conf["remote_host"], conf["remote_port"], conf["local_port"]] }
+        #table = Terminal::Table.new :headings => ['Name', 'Remote Host', 'Remote Port', 'Local Port'], :rows => rows
+        table = Terminal::Table.new :headings => columns.map{|c| c.sub("_"," ").titleize }, :rows => rows
         puts table
       end
 

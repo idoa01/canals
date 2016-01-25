@@ -20,6 +20,12 @@ module Canals
     return @repository if defined?(@repository)
     @repository = Repository.new
   end
+
+  def environments
+    return @repository.environments if defined?(@repository)
+    @repository = Repository.new
+    @repository.environments
+  end
 end
 
 # default logger
