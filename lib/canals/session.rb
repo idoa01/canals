@@ -12,7 +12,11 @@ module Canals
       @session = load_session(session_file)
     end
 
-    def_delegator :@session, :[], :each
+    def_delegator :@session, :[]
+
+    def each(&block)
+      @session.each(&block)
+    end
 
     def add(session, save=true)
       @session.push(session)

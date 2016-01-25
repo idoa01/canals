@@ -2,6 +2,7 @@ require 'canals'
 require 'canals/options'
 require 'canals/environment'
 require 'canals/cli/environment'
+require 'canals/cli/session'
 require 'thor'
 
 module Canals
@@ -17,9 +18,6 @@ module Canals
         opts = Canals::CanalOptions.new(opts)
         Canals::Canal.new.create_tunnel(opts)
       end
-
-      desc "environment SUBCOMMAND", "environment related command (use 'canal environment help' to find out more)"
-      subcommand "environment", Canals::Cli::Environment
 
       desc 'start NAME', 'start tunnel'
       def start(name)
@@ -46,6 +44,12 @@ module Canals
         table = Terminal::Table.new :headings => columns.map{|c| c.sub("_"," ").titleize }, :rows => rows
         puts table
       end
+
+      desc "environment SUBCOMMAND", "environment related command (use 'canal environment help' to find out more)"
+      subcommand "environment", Canals::Cli::Environment
+
+      desc "session SUBCOMMAND", "session related commands (use 'canal session help' to find out more)"
+      subcommand "session", Canals::Cli::Session
 
     end
   end
