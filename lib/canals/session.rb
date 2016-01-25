@@ -19,8 +19,8 @@ module Canals
       save! if save
     end
 
-    def del(pid, save=true)
-      @session.delete_if{ |s| s[:pid] == pid }
+    def del(name, save=true)
+      @session.delete_if{ |s| s[:name] == name }
       save! if save
     end
 

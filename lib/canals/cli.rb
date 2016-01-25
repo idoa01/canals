@@ -26,6 +26,11 @@ module Canals
         Canals::Canal.new.start(name)
       end
 
+      desc 'stop NAME', 'stop tunnel'
+      def stop(name)
+        Canals::Canal.new.stop(name)
+      end
+
       desc "repo", "show the available tunnels"
       method_option :full, :type => :boolean, :desc => "Show full data on repostitory"
       def repo

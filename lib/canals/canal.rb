@@ -18,6 +18,15 @@ module Canals
       pid
     end
 
+    def stop(tunnel_opts)
+      if tunnel_opts.instance_of? String
+        tunnel_opts = Canals.repository.get(tunnel_opts)
+      end
+      tunnel_close(tunnel_opts)
+      Canals.session.del(tunnel_opts.name)
+      puts "Tunnel stopped."
+    end
+
     private
 
     def socket_file(tunnel_opts)
@@ -26,7 +35,7 @@ module Canals
 
     def tunnel_start(tunnel_opts)
       FileUtils.mkdir_p("/tmp/canals")
-      Open3.capture2e("ssh -M -S #{socket_file(tunnel_opts)} -fnNT -L #{tunnel_opts.bind_address}:#{tunnel_opts.local_port}:#{tunnel_opts.remote_host}:#{tunnel_opts.remote_port} #{tunnel_opts.proxy}")
+      system("ssh -M -S #{socket_file(tunnel_opts)} -fnNT -L #{tunnel_opts.bind_address}:#{tunnel_opts.local_port}:#{tunnel_opts.remote_host}:#{tunnel_opts.remote_port} #{tunnel_opts.proxy}")
     end
 
     def tunnel_check(tunnel_opts)
