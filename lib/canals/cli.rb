@@ -32,13 +32,12 @@ module Canals
         require 'terminal-table'
         require 'canals/core_ext/string'
         columns = ["name", "remote_host", "remote_port", "local_port"]
-        columns_extra = ["env_name", "bind_address", "user", "hostname"]
+        columns_extra = ["bind_address", "env_name", "user", "hostname"]
         if options[:full]
           columns += columns_extra
         end
 
-        rows = Canals.repository.map{ |conf| columns.map{ |c| conf.send c.to_sym } } #[conf["name"], conf["remote_host"], conf["remote_port"], conf["local_port"]] }
-        #table = Terminal::Table.new :headings => ['Name', 'Remote Host', 'Remote Port', 'Local Port'], :rows => rows
+        rows = Canals.repository.map{ |conf| columns.map{ |c| conf.send c.to_sym } }
         table = Terminal::Table.new :headings => columns.map{|c| c.sub("_"," ").titleize }, :rows => rows
         puts table
       end
