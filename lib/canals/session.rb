@@ -1,0 +1,57 @@
+require 'psych'
+require 'pathname'
+require 'forwardable'
+require 'canals/core_ext/process'
+
+module Canals
+  class Session
+    include Enumerable
+    extend Forwardable
+
+    def initialize
+      @session = load_session(session_file)
+    end
+
+    def_delegator :@session, :[], :each
+
+    def add(session, save=true)
+      @session.push(session)
+      save! if save
+    end
+
+    def del(pid, save=true)
+      @session.delete_if{ |s| s[:pid] == pid }
+      save! if save
+    end
+
+    def get(session_id)
+      case session_id
+      when Numeric
+        @session.find{ |s| s[:pid] == session_id }
+      when String
+        @session.find{ |s| s[:name] == session_id }
+      end
+    end
+
+    def save!
+      FileUtils.mkdir_p(session_file.dirname)
+      File.open(session_file, 'w') do |file|
+        file.write(Psych.dump(@session))
+      end
+    end
+
+    private
+
+    def session_file
+      file = File.join(Dir.home, '.canals/session')
+      Pathname.new(file)
+    end
+
+    def load_session(_session_file)
+      valid_file = _session_file && _session_file.exist? && !_session_file.size.zero?
+      return [] if !valid_file
+      return Psych.load_file(_session_file)
+    end
+
+  end
+end

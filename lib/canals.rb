@@ -7,6 +7,7 @@ module Canals
 
   autoload :Settings, "canals/settings"
   autoload :Repository, "canals/repository"
+  autoload :Session, 'canals/session'
 
 
   attr_accessor :logger
@@ -25,6 +26,11 @@ module Canals
     return @repository.environments if defined?(@repository)
     @repository = Repository.new
     @repository.environments
+  end
+
+  def session
+    return @session if defined?(@session)
+    @session = Session.new
   end
 end
 
