@@ -18,7 +18,7 @@ module Canals
         Canals::Canal.new.create_tunnel(opts)
       end
 
-      desc "environment", "enviroment related commands"
+      desc "environment SUBCOMMAND", "environment related command (use 'canal environment help' to find out more)"
       subcommand "environment", Canals::Cli::Environment
 
       desc 'start NAME', 'start tunnel'
