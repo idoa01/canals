@@ -22,6 +22,10 @@ module Canals
       @repo[TUNNELS].map{ |n, r| Canals::CanalOptions.new(r) }.each(&block)
     end
 
+    def empty?
+      @repo[TUNNELS].empty?
+    end
+
     def add(options, save=true)
       @repo[TUNNELS][options.name] = options.to_hash
       save! if save

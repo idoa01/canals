@@ -18,6 +18,10 @@ module Canals
       @session.each(&block)
     end
 
+    def empty?
+      @session.empty?
+    end
+
     def add(session, save=true)
       @session.push(session)
       save! if save

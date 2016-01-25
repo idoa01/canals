@@ -8,6 +8,10 @@ module Canals
 
       desc "show", "show the current session"
       def show
+        if Canals.session.empty?
+          puts "Session is currently empty."
+          return
+        end
         require 'terminal-table'
         require 'canals/core_ext/string'
         columns = ["pid", "name", "socket"]

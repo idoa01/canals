@@ -26,6 +26,10 @@ module Canals
 
       desc "show [ENV]", "show the available tunnels"
       def show(env=nil)
+        if Canals.environments.empty?
+          puts "No environments currently defined."
+          return
+        end
         require 'terminal-table'
         rows = Canals.environments.select{ |e| env.nil? || e.name == env}.map{ |e| [e.name, e.user, e.hostname, e.pem] }
         table = Terminal::Table.new :headings => ['Name', 'User', 'Hostname', 'PEM'], :rows => rows

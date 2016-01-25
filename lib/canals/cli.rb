@@ -32,6 +32,10 @@ module Canals
       desc "repo", "show the available tunnels"
       method_option :full, :type => :boolean, :desc => "Show full data on repostitory"
       def repo
+        if Canals.repository.empty?
+          puts "Repository is currently empty."
+          return
+        end
         require 'terminal-table'
         require 'canals/core_ext/string'
         columns = ["name", "remote_host", "remote_port", "local_port"]
