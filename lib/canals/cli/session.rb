@@ -20,6 +20,26 @@ module Canals
         puts table
       end
 
+      desc "restore", "restore the last session"
+      def restore
+        if Canals.session.empty?
+          puts "Session is currently empty."
+          return
+        end
+        Canals.session.each do |sess|
+          name = sess[:name]
+          if Canals.isalive? name
+            puts "Canal #{name.inspect} is running."
+          else
+            puts "Restoring canal #{name.inspect}..."
+            Canals.session.del(name)
+            Canals.start(name)
+          end
+        end
+        puts "restore done."
+      end
+
+
       default_task :show
     end
   end

@@ -27,6 +27,13 @@ module Canals
       puts "Tunnel stopped."
     end
 
+    def isalive?(tunnel_opts)
+      if tunnel_opts.instance_of? String
+        tunnel_opts = Canals.repository.get(tunnel_opts)
+      end
+      !!tunnel_pid(tunnel_opts)
+    end
+
     private
 
     def socket_file(tunnel_opts)
