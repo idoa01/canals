@@ -1,7 +1,6 @@
 require 'psych'
 require 'pathname'
 require 'forwardable'
-require 'canals/core_ext/process'
 
 module Canals
   class Session
