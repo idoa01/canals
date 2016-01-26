@@ -29,14 +29,15 @@ module Canals
         Canals.session.each do |sess|
           name = sess[:name]
           if Canals.isalive? name
-            puts "Canal #{name.inspect} is running."
+            puts "Canal #{name.inspect} is running.".green
           else
-            puts "Restoring canal #{name.inspect}..."
+            puts "Restoring canal #{name.inspect}...".light_red
             Canals.session.del(name)
             Canals.start(name)
           end
         end
-        puts "restore done."
+        puts
+        puts "restore done.".green
       end
 
 

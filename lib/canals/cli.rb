@@ -3,6 +3,7 @@ require 'canals/options'
 require 'canals/environment'
 require 'canals/cli/environment'
 require 'canals/cli/session'
+require 'colorize'
 require 'thor'
 
 module Canals
