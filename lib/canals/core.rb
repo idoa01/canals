@@ -1,7 +1,7 @@
 require 'open3'
 
 module Canals
-  class Canal
+  class << self
 
     def create_tunnel(tunnel_opts)
       Canals.repository.add tunnel_opts

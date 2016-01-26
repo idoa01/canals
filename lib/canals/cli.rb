@@ -16,17 +16,17 @@ module Canals
       def create(name, remote_host, remote_port, local_port=nil)
         opts = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}.merge(options)
         opts = Canals::CanalOptions.new(opts)
-        Canals::Canal.new.create_tunnel(opts)
+        Canals.create_tunnel(opts)
       end
 
       desc 'start NAME', 'start tunnel'
       def start(name)
-        Canals::Canal.new.start(name)
+        Canals.start(name)
       end
 
       desc 'stop NAME', 'stop tunnel'
       def stop(name)
-        Canals::Canal.new.stop(name)
+        Canals.stop(name)
       end
 
       desc "repo", "show the available tunnels"

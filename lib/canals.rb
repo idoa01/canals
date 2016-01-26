@@ -1,5 +1,5 @@
 require 'logger'
-require 'canals/canal'
+require 'canals/core'
 
 # a gem for managing ssh tunnel connections
 module Canals
