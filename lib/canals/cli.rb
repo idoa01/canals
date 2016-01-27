@@ -30,7 +30,12 @@ module Canals
         Canals.stop(name)
       end
 
-      desc "repo", "show the available tunnels"
+      desc 'restart NAME', 'Restart tunnel'
+      def restart(name)
+        Canals.restart(name)
+      end
+
+      desc "repo", "Show the available tunnels"
       method_option :full, :type => :boolean, :desc => "Show full data on repostitory"
       def repo
         if Canals.repository.empty?

@@ -24,7 +24,12 @@ module Canals
       end
       tunnel_close(tunnel_opts)
       Canals.session.del(tunnel_opts.name)
-      puts "Tunnel stopped."
+      puts "Tunnel #{tunnel_opts.name.inspect} stopped."
+    end
+
+    def restart(tunnel_opts)
+      stop(tunnel_opts)
+      start(tunnel_opts)
     end
 
     def isalive?(tunnel_opts)

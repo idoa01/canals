@@ -40,6 +40,19 @@ module Canals
         puts "restore done.".green
       end
 
+      desc "restart", "Restart the current session (closing and starting all connections)"
+      def restart
+        if Canals.session.empty?
+          puts "Session is currently empty."
+          return
+        end
+        Canals.session.each do |sess|
+          name = sess[:name]
+          Canals.restart(name)
+        end
+        puts
+        puts "restart done.".green
+      end
 
       default_task :show
     end
