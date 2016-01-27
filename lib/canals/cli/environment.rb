@@ -8,7 +8,7 @@ module Canals
   module Cli
     class Environment < Thor
 
-      desc 'create NAME HOSTNAME', 'create a new ssh environment'
+      desc 'create NAME HOSTNAME', 'Create a new ssh environment'
       method_option :user,    :type => :string,  :desc => "The user for the ssh proxy host"
       method_option :pem,     :type => :string,  :desc => "The PEM file location for this environment"
       method_option :default, :type => :boolean, :desc => "Make this the default enviroment"
@@ -24,7 +24,7 @@ module Canals
         Canals.repository.add_environment(env)
       end
 
-      desc "show [ENV]", "show the available tunnels"
+      desc "show [ENV]", "Show the available tunnels"
       def show(env=nil)
         if Canals.environments.empty?
           puts "No environments currently defined."

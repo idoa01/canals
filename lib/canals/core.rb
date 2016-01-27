@@ -14,7 +14,7 @@ module Canals
       tunnel_start(tunnel_opts)
       pid = tunnel_pid(tunnel_opts)
       Canals.session.add({name: tunnel_opts.name, pid: pid, socket: socket_file(tunnel_opts)})
-      puts "Created tunnel with pid #{pid.to_i}"
+      puts "Created tunnel #{tunnel_opts.name.inspect} with pid #{pid.to_i}"
       pid
     end
 

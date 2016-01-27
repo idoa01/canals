@@ -10,7 +10,7 @@ module Canals
   module Cli
     class Application < Thor
 
-      desc 'create NAME REMOTE_HOST REMOTE_PORT=N', 'create a new tunnel'
+      desc 'create NAME REMOTE_HOST REMOTE_PORT [LOCAL_PORT]', "Create a new tunnel; if LOCAL_PORT isn't supplied, REMOTE_PORT will be used as LOCAL"
       method_option :env,      :type => :string, :desc => "The proxy environment to use"
       method_option :hostname, :type => :string, :desc => "The proxy host we will use to connect through"
       method_option :user,     :type => :string, :desc => "The user for the ssh proxy host"
@@ -18,14 +18,15 @@ module Canals
         opts = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}.merge(options)
         opts = Canals::CanalOptions.new(opts)
         Canals.create_tunnel(opts)
+        puts "Tunnel #{name.inspect} created.".green
       end
 
-      desc 'start NAME', 'start tunnel'
+      desc 'start NAME', 'Start tunnel'
       def start(name)
         Canals.start(name)
       end
 
-      desc 'stop NAME', 'stop tunnel'
+      desc 'stop NAME', 'Stop tunnel'
       def stop(name)
         Canals.stop(name)
       end
@@ -55,10 +56,10 @@ module Canals
         puts table
       end
 
-      desc "environment SUBCOMMAND", "environment related command (use 'canal environment help' to find out more)"
+      desc "environment SUBCOMMAND", "Environment related command (use 'canal environment help' to find out more)"
       subcommand "environment", Canals::Cli::Environment
 
-      desc "session SUBCOMMAND", "session related commands (use 'canal session help' to find out more)"
+      desc "session SUBCOMMAND", "Session related commands (use 'canal session help' to find out more)"
       subcommand "session", Canals::Cli::Session
 
     end

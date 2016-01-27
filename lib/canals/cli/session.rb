@@ -6,7 +6,7 @@ module Canals
   module Cli
     class Session < Thor
 
-      desc "show", "show the current session"
+      desc "show", "Show the current session"
       def show
         if Canals.session.empty?
           puts "Session is currently empty."
@@ -20,7 +20,7 @@ module Canals
         puts table
       end
 
-      desc "restore", "restore the last session"
+      desc "restore", "Restore the connection to tunnels which aren't working"
       def restore
         if Canals.session.empty?
           puts "Session is currently empty."
