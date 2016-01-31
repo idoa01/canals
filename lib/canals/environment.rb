@@ -1,7 +1,7 @@
 require 'psych'
 
 module Canals
-  class CanalOptionError < StandardError; end
+  class CanalEnvironmentError < StandardError; end
 
   class Environment
     attr_reader :name, :user, :hostname, :pem
@@ -15,7 +15,7 @@ module Canals
 
     def validate?(args)
       vargs = args.dup
-      raise CanalOptionError.new("Missing option: \"name\" in environment creation") if args["name"].nil?
+      raise CanalEnvironmentError.new("Missing option: \"name\" in environment creation") if args["name"].nil?
       vargs
     end
 
