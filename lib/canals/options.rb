@@ -4,7 +4,9 @@ module Canals
   class CanalOptionError < StandardError; end
 
   class CanalOptions
+    BIND_ADDRESS = "127.0.0.1"
     attr_reader :name, :remote_host, :remote_port, :local_port, :env_name, :env
+
     def initialize(args)
       @args = validate?(args)
       @name = @args["name"]
@@ -17,7 +19,7 @@ module Canals
 
     def bind_address
       return @args["bind_address"] if @args["bind_address"]
-      return "127.0.0.1"
+      return BIND_ADDRESS
     end
 
     def hostname
