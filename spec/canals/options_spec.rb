@@ -4,55 +4,47 @@ require 'psych'
 
 describe Canals::CanalOptions do
 
-  context "mandatory fields" do
-    let(:name) { "example" }
-    let(:remote_host) { "www.example.com" }
-    let(:remote_port) { 1234 }
-    let(:local_port)  { 4321 }
+  let(:name) { "example" }
+  let(:remote_host) { "www.example.com" }
+  let(:remote_port) { 1234 }
+  let(:local_port)  { 4321 }
 
+  describe "name" do
     it "contains 'name'" do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port}
       opt = Canals::CanalOptions.new(args)
       expect(opt.name).to eq name
     end
 
+    it "raises error when 'name' is not availble" do
+      args = {"remote_host" => remote_host, "remote_port" => remote_port}
+      expect{Canals::CanalOptions.new(args)}.to raise_error(Canals::CanalOptionError)
+    end
+  end
+
+  describe "remote_host" do
     it "contains 'remote_host'" do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port}
       opt = Canals::CanalOptions.new(args)
       expect(opt.remote_host).to eq remote_host
     end
 
+    it "raises error when 'remote_host' is not availble" do
+      args = {"name" => name, "remote_port" => remote_port}
+      expect{Canals::CanalOptions.new(args)}.to raise_error(Canals::CanalOptionError)
+    end
+  end
+
+  describe "remote_port" do
     it "contains 'remote_port'" do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port}
       opt = Canals::CanalOptions.new(args)
       expect(opt.remote_port).to eq remote_port
     end
 
-    it "raises error when 'name' is not availble" do
-      args = {"remote_host" => remote_host, "remote_port" => remote_port}
-      expect{Canals::CanalOptions.new(args)}.to raise_error(Canals::CanalOptionError)
-    end
-
-    it "raises error when 'remote_host' is not availble" do
-      args = {"name" => name, "remote_port" => remote_port}
-      expect{Canals::CanalOptions.new(args)}.to raise_error(Canals::CanalOptionError)
-    end
-
     it "raises error when 'remote_port' is not availble" do
       args = {"name" => name, "remote_host" => remote_host}
       expect{Canals::CanalOptions.new(args)}.to raise_error(Canals::CanalOptionError)
-    end
-
-    it "returns 'remote_port' for 'local_port' if 'local_port' isn't given" do
-      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port}
-      opt = Canals::CanalOptions.new(args)
-      expect(opt.local_port).to eq remote_port
-    end
-
-    it "returns 'local_port' if 'local_port' is availble" do
-      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}
-      opt = Canals::CanalOptions.new(args)
-      expect(opt.local_port).to eq local_port
     end
 
     it "transforms remote_port to int if given in string" do
@@ -62,11 +54,29 @@ describe Canals::CanalOptions do
       expect(opt.local_port).to eq 1234
     end
 
+  end
+
+  context "local_port" do
+    it "returns 'local_port' if 'local_port' is availble" do
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}
+      opt = Canals::CanalOptions.new(args)
+      expect(opt.local_port).to eq local_port
+    end
+
+    it "returns 'remote_port' for 'local_port' if 'local_port' isn't given" do
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port}
+      opt = Canals::CanalOptions.new(args)
+      expect(opt.local_port).to eq remote_port
+    end
+
     it "transforms local_port to int if given in string" do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => "4321"}
       opt = Canals::CanalOptions.new(args)
       expect(opt.local_port).to eq 4321
     end
+  end
+
+  describe "to_yaml" do
 
     it "dumps remote_port as int" do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => '1234'}

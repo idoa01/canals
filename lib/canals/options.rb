@@ -15,20 +15,6 @@ module Canals
       @env = Canals.repository.environment(@env_name)
     end
 
-    def validate?(args)
-      vargs = args.dup
-      raise CanalOptionError.new("Missing option: \"name\" in canal creation") if args["name"].nil?
-      raise CanalOptionError.new("Missing option: \"remote_host\" in canal creation") if args["remote_host"].nil?
-      raise CanalOptionError.new("Missing option: \"remote_port\" in canal creation") if args["remote_port"].nil?
-      vargs["remote_port"] = vargs["remote_port"].to_i
-      if vargs["local_port"].nil?
-        vargs["local_port"] = vargs["remote_port"]
-      else
-        vargs["local_port"] = vargs["local_port"].to_i
-      end
-      vargs
-    end
-
     def bind_address
       return @args["bind_address"] if @args["bind_address"]
       return "127.0.0.1"
@@ -59,6 +45,20 @@ module Canals
     end
 
     private
+
+    def validate?(args)
+      vargs = args.dup
+      raise CanalOptionError.new("Missing option: \"name\" in canal creation") if args["name"].nil?
+      raise CanalOptionError.new("Missing option: \"remote_host\" in canal creation") if args["remote_host"].nil?
+      raise CanalOptionError.new("Missing option: \"remote_port\" in canal creation") if args["remote_port"].nil?
+      vargs["remote_port"] = vargs["remote_port"].to_i
+      if vargs["local_port"].nil?
+        vargs["local_port"] = vargs["remote_port"]
+      else
+        vargs["local_port"] = vargs["local_port"].to_i
+      end
+      vargs
+    end
 
     def get_env_var(var)
       return @args[var] if @args[var]
