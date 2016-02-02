@@ -8,10 +8,7 @@ module Canals
 
       desc "show", "Show the current session"
       def show
-        if Canals.session.empty?
-          puts "Session is currently empty."
-          return
-        end
+        return if session_empty?
         require 'terminal-table'
         require 'canals/core_ext/string'
         columns = ["pid", "name", "socket"]
@@ -22,36 +19,49 @@ module Canals
 
       desc "restore", "Restore the connection to tunnels which aren't working"
       def restore
-        if Canals.session.empty?
-          puts "Session is currently empty."
-          return
-        end
-        Canals.session.each do |sess|
-          name = sess[:name]
+        on_all_canals_in_session(:restore) do |name|
           if Canals.isalive? name
-            puts "Canal #{name.inspect} is running.".green
+            puts "Canal #{name.inspect} is running."
           else
-            puts "Restoring canal #{name.inspect}...".light_red
             Canals.session.del(name)
             Canals.start(name)
           end
         end
-        puts
-        puts "restore done.".green
       end
 
       desc "restart", "Restart the current session (closing and starting all connections)"
       def restart
-        if Canals.session.empty?
-          puts "Session is currently empty."
-          return
-        end
-        Canals.session.each do |sess|
-          name = sess[:name]
+        on_all_canals_in_session(:restart) do |name|
           Canals.restart(name)
         end
-        puts
-        puts "restart done.".green
+      end
+
+      desc "stop", "Stop the current session"
+      def stop
+        on_all_canals_in_session(:stop) do |name|
+          Canals.stop(name)
+        end
+      end
+
+      no_commands do
+        def on_all_canals_in_session(command, &block)
+          return if session_empty?
+          Canals.session.map{|s| s[:name]}.each do |name|
+            puts "#{command.to_s.capitalize} canal #{name.inspect}:".green
+            block.call(name)
+          end
+          puts
+          puts "#{command} done.".green
+        end
+
+        def session_empty?
+          if Canals.session.empty?
+            puts "Canal session is currently empty."
+            true
+          else
+            false
+          end
+        end
       end
 
       default_task :show
