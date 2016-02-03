@@ -37,8 +37,10 @@ module Canals
         Canals.restart(name)
       end
 
-      desc "repo", "Show the available tunnels"
+      desc "repo", "Show the available tunnels, for given enviroment if given"
       method_option :full, :type => :boolean, :desc => "Show full data on repostitory"
+      method_option :env,  :type => :string , :desc => "Show data only on given environment"
+      method_option :'sort-by',  :type => :string, :desc => "Sort by this field", :default => "name"
       def repo
         if Canals.repository.empty?
           puts "Repository is currently empty."
@@ -52,9 +54,14 @@ module Canals
           columns += columns_extra
         end
 
-        rows = Canals.repository.map{ |conf| columns.map{ |c| conf.send c.to_sym } }
+        env = options[:env]
+        sort_by = options[:'sort-by'].downcase.split.join("_").to_sym
+        rows = Canals.repository.select { |conf| env.nil? || conf.env_name == env }
+                                .sort   { |a,b| a.send(sort_by) <=> b.send(sort_by) }
+                                .map    { |conf| columns.map{ |c| conf.send c.to_sym } }
         table = Terminal::Table.new :headings => columns.map{|c| c.sub("_"," ").titleize }, :rows => rows
         puts table
+        puts "* use --full to show more data".light_white if !options[:full]
       end
 
       desc "environment SUBCOMMAND", "Environment related command (use 'canal environment help' to find out more)"
