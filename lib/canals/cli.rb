@@ -3,6 +3,7 @@ require 'canals/options'
 require 'canals/environment'
 require 'canals/cli/environment'
 require 'canals/cli/session'
+require 'canals/cli/list'
 require 'colorize'
 require 'thor'
 
@@ -61,6 +62,9 @@ module Canals
 
       desc "session SUBCOMMAND", "Session related commands (use 'canal session help' to find out more)"
       subcommand "session", Canals::Cli::Session
+
+      desc "list", "hidden lists for autocompletion", :hide => true
+      subcommand "list", Canals::Cli::List
 
     end
   end
