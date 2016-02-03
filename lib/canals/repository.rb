@@ -28,6 +28,9 @@ module Canals
 
     def add(options, save=true)
       @repo[TUNNELS][options.name] = options.to_hash
+      if options.env_name.nil? && options.env.is_default?
+        @repo[TUNNELS][options.name]["env"] = options.env.name
+      end
       save! if save
     end
 
