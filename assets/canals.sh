@@ -33,6 +33,11 @@ _canal_complete() {
                       -W "help restart restore show stop" \
                       -- $cur) )
         ;;
+      setup)
+        COMPREPLY=( $(compgen \
+                      -W "completion help wizard" \
+                      -- $cur) )
+        ;;
       # Everything else
       *)
         COMPREPLY=( $(compgen \
