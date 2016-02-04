@@ -10,7 +10,7 @@ _canal_complete() {
   # Setup the base level (everything after "canal")
   if [ $COMP_CWORD -eq 1 ]; then
     COMPREPLY=( $(compgen \
-                  -W "create environment help repo restart session start stop wizard" \
+                  -W "create environment help repo restart session setup start stop" \
                   -- $cur) )
     return 0
   fi
