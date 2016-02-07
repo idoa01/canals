@@ -5,6 +5,7 @@ require 'thor'
 module Canals
   module Cli
     class Session < Thor
+      include Thor::Actions
 
       desc "show", "Show the current session"
       def show
@@ -14,14 +15,14 @@ module Canals
         columns = ["pid", "name", "socket"]
         rows = Canals.session.map{ |s| columns.map{ |c| s[c.to_sym] } }
         table = Terminal::Table.new :headings => columns.map{|c| c.sub("_"," ").titleize }, :rows => rows
-        puts table
+        say table
       end
 
       desc "restore", "Restore the connection to tunnels which aren't working"
       def restore
         on_all_canals_in_session(:restore) do |name|
           if Canals.isalive? name
-            puts "Canal #{name.inspect} is running."
+            say "Canal #{name.inspect} is running."
           else
             Canals.session.del(name)
             Canals.start(name)
@@ -47,16 +48,16 @@ module Canals
         def on_all_canals_in_session(command, &block)
           return if session_empty?
           Canals.session.map{|s| s[:name]}.each do |name|
-            puts "#{command.to_s.capitalize} canal #{name.inspect}:".green
+            say "#{command.to_s.capitalize} canal #{name.inspect}:".green
             block.call(name)
           end
-          puts
-          puts "#{command} done.".green
+          say
+          say "#{command} done.".green
         end
 
         def session_empty?
           if Canals.session.empty?
-            puts "Canal session is currently empty."
+            say "Canal session is currently empty."
             true
           else
             false

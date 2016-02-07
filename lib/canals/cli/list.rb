@@ -7,17 +7,18 @@ require 'pry'
 module Canals
   module Cli
     class List < Thor
+      include Thor::Actions
 
       desc 'environments', 'List the different environments'
       def environments
         envs = Canals.environments.map{ |conf| conf.name }
-        puts envs.sort
+        say envs.sort
       end
 
       desc 'tunnels', 'List the different tunnels'
       def tunnels
         tunnels = Canals.repository.map{ |conf| conf.name }
-        puts tunnels.sort
+        say tunnels.sort
       end
 
       desc 'commands', 'List all the base level commands'
@@ -32,7 +33,7 @@ module Canals
         end
 
         cmds = thor_class.all_commands.values.select{ |c| c.class == Thor::Command }.map{ |c| c.name }
-        puts cmds.sort
+        say cmds.sort
       end
 
     end

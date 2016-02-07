@@ -7,6 +7,7 @@ require 'thor'
 module Canals
   module Cli
     class Environment < Thor
+      include Thor::Actions
 
       desc 'create NAME HOSTNAME', 'Create a new ssh environment'
       method_option :user,    :type => :string,  :desc => "The user for the ssh proxy host"
@@ -27,13 +28,13 @@ module Canals
       desc "show [ENV]", "Show the available tunnels"
       def show(env=nil)
         if Canals.environments.empty?
-          puts "No environments currently defined."
+          say "No environments currently defined."
           return
         end
         require 'terminal-table'
         rows = Canals.environments.select{ |e| env.nil? || e.name == env}.map{ |e| [e.name + (e.is_default? ? "*" : ""), e.user, e.hostname, e.pem] }
         table = Terminal::Table.new :headings => ['Name', 'User', 'Hostname', 'PEM'], :rows => rows
-        puts table
+        say table
       end
 
       default_task :show

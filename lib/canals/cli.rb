@@ -11,6 +11,7 @@ require 'thor'
 module Canals
   module Cli
     class Application < Thor
+      include Thor::Actions
 
       desc 'create NAME REMOTE_HOST REMOTE_PORT [LOCAL_PORT]', "Create a new tunnel; if LOCAL_PORT isn't supplied, REMOTE_PORT will be used as LOCAL"
       method_option :env,      :type => :string, :desc => "The proxy environment to use"
@@ -20,7 +21,7 @@ module Canals
         opts = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}.merge(options)
         opts = Canals::CanalOptions.new(opts)
         Canals.create_tunnel(opts)
-        puts "Tunnel #{name.inspect} created.".green
+        say "Tunnel #{name.inspect} created.".green
       end
 
       desc 'start NAME', 'Start tunnel'
@@ -44,7 +45,7 @@ module Canals
       method_option :'sort-by',  :type => :string, :desc => "Sort by this field", :default => "name"
       def repo
         if Canals.repository.empty?
-          puts "Repository is currently empty."
+          say "Repository is currently empty."
           return
         end
         require 'terminal-table'
@@ -61,8 +62,8 @@ module Canals
                                 .sort   { |a,b| a.send(sort_by) <=> b.send(sort_by) }
                                 .map    { |conf| columns.map{ |c| conf.send c.to_sym } }
         table = Terminal::Table.new :headings => columns.map{|c| c.sub("_"," ").titleize }, :rows => rows
-        puts table
-        puts "* use --full to show more data".light_white if !options[:full]
+        say table
+        say "* use --full to show more data".light_white if !options[:full]
       end
 
       desc "environment SUBCOMMAND", "Environment related command (use 'canal environment help' to find out more)"
