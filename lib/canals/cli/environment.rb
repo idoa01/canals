@@ -32,8 +32,8 @@ module Canals
           return
         end
         require 'terminal-table'
-        rows = Canals.environments.select{ |e| env.nil? || e.name == env}.map{ |e| [e.name + (e.is_default? ? "*" : ""), e.user, e.hostname, e.pem] }
-        table = Terminal::Table.new :headings => ['Name', 'User', 'Hostname', 'PEM'], :rows => rows
+        rows = Canals.environments.select{ |e| env.nil? || e.name == env}.map{ |e| [(e.is_default? ? "*" : ""), e.name, e.user, e.hostname, e.pem] }
+        table = Terminal::Table.new :headings => ['', 'Name', 'User', 'Hostname', 'PEM'], :rows => rows
         say table
       end
 
