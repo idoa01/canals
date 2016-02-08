@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.files                 = `git ls-files`.split($/)
   s.test_files            = `git ls-files -- {test,spec,features}/*`.split($/)
   s.executables           = `git ls-files -- bin/*`.split($/).map{ |f| File.basename(f) }
-  s.require_path          = ["lib"]
+  s.require_path          = "lib"
 
   s.add_dependency        'thor', '~> 0.19.1'
   s.add_dependency        'terminal-table'
