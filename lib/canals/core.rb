@@ -14,8 +14,7 @@ module Canals
       tunnel_start(tunnel_opts)
       pid = tunnel_pid(tunnel_opts)
       Canals.session.add({name: tunnel_opts.name, pid: pid, socket: socket_file(tunnel_opts)})
-      puts "Created tunnel #{tunnel_opts.name.inspect} with pid #{pid.to_i}"
-      pid
+      pid.to_i
     end
 
     def stop(tunnel_opts)
@@ -24,7 +23,6 @@ module Canals
       end
       tunnel_close(tunnel_opts)
       Canals.session.del(tunnel_opts.name)
-      puts "Tunnel #{tunnel_opts.name.inspect} stopped."
     end
 
     def restart(tunnel_opts)

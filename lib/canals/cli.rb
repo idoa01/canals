@@ -3,6 +3,7 @@ require 'canals/options'
 require 'canals/environment'
 require 'canals/cli/environment'
 require 'canals/cli/session'
+require 'canals/cli/helpers'
 require 'canals/cli/setup'
 require 'canals/cli/list'
 require 'colorize'
@@ -12,6 +13,7 @@ module Canals
   module Cli
     class Application < Thor
       include Thor::Actions
+      include Canals::Cli::Helpers
 
       desc 'create NAME REMOTE_HOST REMOTE_PORT [LOCAL_PORT]', "Create a new tunnel; if LOCAL_PORT isn't supplied, REMOTE_PORT will be used as LOCAL"
       method_option :env,      :type => :string, :desc => "The proxy environment to use"
@@ -26,17 +28,17 @@ module Canals
 
       desc 'start NAME', 'Start tunnel'
       def start(name)
-        Canals.start(name)
+        tstart(name)
       end
 
       desc 'stop NAME', 'Stop tunnel'
       def stop(name)
-        Canals.stop(name)
+        tstop(name)
       end
 
       desc 'restart NAME', 'Restart tunnel'
       def restart(name)
-        Canals.restart(name)
+        trestart(name)
       end
 
       desc "repo", "Show the available tunnels, for given enviroment if given"

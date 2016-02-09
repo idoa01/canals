@@ -1,4 +1,5 @@
 require 'canals'
+require 'canals/cli/helpers'
 require 'thor'
 
 
@@ -6,6 +7,7 @@ module Canals
   module Cli
     class Session < Thor
       include Thor::Actions
+      include Canals::Cli::Helpers
 
       desc "show", "Show the current session"
       def show
@@ -25,7 +27,7 @@ module Canals
             say "Canal #{name.inspect} is running."
           else
             Canals.session.del(name)
-            Canals.start(name)
+            tstart(name)
           end
         end
       end
@@ -33,14 +35,14 @@ module Canals
       desc "restart", "Restart the current session (closing and starting all connections)"
       def restart
         on_all_canals_in_session(:restart) do |name|
-          Canals.restart(name)
+          trestart(name)
         end
       end
 
       desc "stop", "Stop the current session"
       def stop
         on_all_canals_in_session(:stop) do |name|
-          Canals.stop(name)
+          tstop(name)
         end
       end
 
