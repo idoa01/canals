@@ -66,7 +66,7 @@ module Canals
         env = options[:env]
         sort_by = options[:'sort-by'].downcase.split.join("_").to_sym
         rows = Canals.repository.select { |conf| env.nil? || conf.env_name == env }
-                                .sort   { |a,b| a.send(sort_by) <=> b.send(sort_by) }
+                                .sort   { |a,b| a.send(sort_by) <=> b.send(sort_by) rescue a.name <=> b.name }
                                 .map    { |conf| columns.map{ |c| conf.send c.to_sym } }
         table = Terminal::Table.new :headings => columns.map{|c| c.sub("_"," ").titleize }, :rows => rows
         say table
