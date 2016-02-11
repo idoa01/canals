@@ -38,7 +38,7 @@ module Canals
         end
 
         def humanize(bool)
-          bool ? set_color("yes",:green) : set_color("no", :red)
+          bool ? set_color("yes", :green) : set_color("no", :red)
         end
       end
 

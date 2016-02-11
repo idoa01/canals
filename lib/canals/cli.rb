@@ -6,7 +6,6 @@ require 'canals/cli/session'
 require 'canals/cli/helpers'
 require 'canals/cli/setup'
 require 'canals/cli/list'
-require 'colorize'
 require 'thor'
 
 module Canals
@@ -28,7 +27,7 @@ module Canals
         opts = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}.merge(options)
         opts = Canals::CanalOptions.new(opts)
         Canals.create_tunnel(opts)
-        say "Tunnel #{name.inspect} created.".green
+        say "Tunnel #{name.inspect} created.", :green
       end
 
       desc 'start NAME', 'Start tunnel'
@@ -70,7 +69,7 @@ module Canals
                                 .map    { |conf| columns.map{ |c| conf.send c.to_sym } }
         table = Terminal::Table.new :headings => columns.map{|c| c.sub("_"," ").titleize }, :rows => rows
         say table
-        say "* use --full to show more data".light_white if !options[:full]
+        say "* use --full to show more data" if !options[:full]
       end
 
       desc "environment SUBCOMMAND", "Environment related command (use 'canal environment help' to find out more)"

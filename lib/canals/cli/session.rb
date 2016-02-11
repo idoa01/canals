@@ -50,11 +50,11 @@ module Canals
         def on_all_canals_in_session(command, &block)
           return if session_empty?
           Canals.session.map{|s| s[:name]}.each do |name|
-            say "#{command.to_s.capitalize} canal #{name.inspect}:".green
+            say "#{command.to_s.capitalize} canal #{name.inspect}:", :green
             block.call(name)
           end
           say
-          say "#{command} done.".green
+          say "#{command} done.", :green
         end
 
         def session_empty?
