@@ -3,7 +3,7 @@ require 'pathname'
 require 'forwardable'
 
 module Canals
-  class Settings
+  class Config
     extend Forwardable
 
     def initialize(root = nil)
@@ -11,17 +11,26 @@ module Canals
       @config = load_config(global_config_file)
     end
 
-    def_delegator :@config, :[]
-
-    def global_config_file
-      file = File.join(Dir.home, '.canals/config')
-      Pathname.new(file)
-    end
+    def_delegators :@config, :[], :[]=
 
     def load_config(config_file)
       valid_file = config_file && config_file.exist? && !config_file.size.zero?
       return {} if !valid_file
       return Psych.load_file(config_file)
+    end
+
+    def save!
+      FileUtils.mkdir_p(global_config_file.dirname)
+      File.open(global_config_file, 'w') do |file|
+        file.write(Psych.dump(@config))
+      end
+    end
+
+    private
+
+    def global_config_file
+      file = File.join(Dir.home, '.canals/config')
+      Pathname.new(file)
     end
 
   end

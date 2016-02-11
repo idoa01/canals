@@ -7,14 +7,15 @@ module Canals
 
   autoload :Settings, "canals/settings"
   autoload :Repository, "canals/repository"
-  autoload :Session, 'canals/session'
+  autoload :Config, 'canals/config'
+  autoload :Version, 'canals/version'
 
 
   attr_accessor :logger
 
-  def settings
-    return @settings if defined?(@settings)
-    @settings = Settings.new(File.join(Dir.home, '.canals'))
+  def config
+    return @config if defined?(@config)
+    @config = Config.new(File.join(Dir.home, '.canals'))
   end
 
   def repository
