@@ -15,6 +15,11 @@ module Canals
       include Thor::Actions
       include Canals::Cli::Helpers
 
+      def initialize(*args)
+        super
+        startup_checks
+      end
+
       desc 'create NAME REMOTE_HOST REMOTE_PORT [LOCAL_PORT]', "Create a new tunnel; if LOCAL_PORT isn't supplied, REMOTE_PORT will be used as LOCAL"
       method_option :env,      :type => :string, :desc => "The proxy environment to use"
       method_option :hostname, :type => :string, :desc => "The proxy host we will use to connect through"

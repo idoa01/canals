@@ -1,3 +1,4 @@
+require 'canals'
 require 'canals/tools/assets'
 
 module Canals
@@ -26,6 +27,12 @@ module Canals
       def update_completion
         mkdir_p(config_path)
         cp(Assets['canals.sh'], cmp_file)
+        update_config
+      end
+
+      def update_config
+        Canals.config[:completion_version] = Canals::VERSION
+        Canals.config.save!
       end
 
       def completion_installed?

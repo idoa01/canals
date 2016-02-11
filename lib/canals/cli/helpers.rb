@@ -1,4 +1,5 @@
 require 'canals'
+require 'canals/tools/completion'
 
 module Canals
   module Cli
@@ -20,6 +21,18 @@ module Canals
         tstart(name)
       end
 
+      def startup_checks
+        check_completion
+      end
+
+      def check_completion
+        if Canals.config[:completion_version]
+          if Canals.config[:completion_version] != Canals::VERSION
+            Canals::Tools::Completion.update_completion
+            say "bash completion script upgraded, use `source #{Canals::Tools::Completion.cmp_file}` to reload it", :red
+          end
+        end
+      end
     end
   end
 end
