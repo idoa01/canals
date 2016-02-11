@@ -35,7 +35,10 @@ module Canals
     end
 
     def proxy
-      "#{user}@#{hostname}"
+      prxy = ""
+      prxy += "-i #{pem} " if pem
+      prxy += "#{user}@#{hostname}"
+      prxy
     end
 
     def to_yaml
