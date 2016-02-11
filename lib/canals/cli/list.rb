@@ -12,13 +12,13 @@ module Canals
       desc 'environments', 'List the different environments'
       def environments
         envs = Canals.environments.map{ |conf| conf.name }
-        say envs.sort
+        say envs.sort.join " "
       end
 
       desc 'tunnels', 'List the different tunnels'
       def tunnels
         tunnels = Canals.repository.map{ |conf| conf.name }
-        say tunnels.sort
+        say tunnels.sort.join " "
       end
 
       desc 'commands', 'List all the base level commands'
@@ -33,7 +33,7 @@ module Canals
         end
 
         cmds = thor_class.all_commands.values.select{ |c| c.class == Thor::Command }.map{ |c| c.name }
-        say cmds.sort
+        say cmds.sort.join " "
       end
 
     end
