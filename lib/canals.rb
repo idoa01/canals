@@ -5,8 +5,8 @@ require 'canals/core'
 module Canals
   extend self
 
-  autoload :Settings, "canals/settings"
   autoload :Repository, "canals/repository"
+  autoload :Session, "canals/session"
   autoload :Config, 'canals/config'
   autoload :Version, 'canals/version'
 
