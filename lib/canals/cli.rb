@@ -6,6 +6,7 @@ require 'canals/cli/session'
 require 'canals/cli/helpers'
 require 'canals/cli/setup'
 require 'canals/cli/list'
+require 'canals/core_ext/shell_colors'
 require 'thor'
 
 module Canals
@@ -69,7 +70,7 @@ module Canals
                                 .map    { |conf| columns.map{ |c| conf.send c.to_sym } }
         table = Terminal::Table.new :headings => columns.map{|c| c.sub("_"," ").titleize }, :rows => rows
         say table
-        say "* use --full to show more data" if !options[:full]
+        say "* use --full to show more data", [:white, :dim] if !options[:full]
       end
 
       desc "environment SUBCOMMAND", "Environment related command (use 'canal environment help' to find out more)"
