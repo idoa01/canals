@@ -13,7 +13,8 @@ module Canals
 
       def tstart(name)
         pid = Canals.start(name)
-        say "Created tunnel #{name.inspect} with pid #{pid}"
+        tunnel = Canals.repository.get(name)
+        say "Created tunnel #{name.inspect} with pid #{pid}. You can access it using '#{tunnel.bind_address}:#{tunnel.local_port}'"
         pid
       end
 
