@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/canals.svg)](https://badge.fury.io/rb/canals)
+
 # Canals: Help manage SSH tunnels
 
 Canals eases the process of creating and managing SSH tunnels.
