@@ -96,6 +96,11 @@ describe Canals::CanalOptions do
 
   describe "environment variables" do
     context "without env" do
+
+      before(:each) do
+        expect(Canals.repository).to receive(:environment).and_return(nil)
+      end
+
       it "returns 'hostname/user/pem' if availble" do
         args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "hostname" => hostname, "user" => user, "pem" => pem}
         opt = Canals::CanalOptions.new(args)
@@ -112,6 +117,12 @@ describe Canals::CanalOptions do
 
       it "constructs proxy value" do
         args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "hostname" => hostname, "user" => user, "pem" => pem}
+        opt = Canals::CanalOptions.new(args)
+        expect(opt.proxy).to eq "-i #{pem} #{user}@#{hostname}"
+      end
+
+      it "constructs proxy value, no pem" do
+        args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "hostname" => hostname, "user" => user}
         opt = Canals::CanalOptions.new(args)
         expect(opt.proxy).to eq "#{user}@#{hostname}"
       end
@@ -146,7 +157,7 @@ describe Canals::CanalOptions do
       it "constructs proxy value" do
         args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "env" => env_name}
         opt = Canals::CanalOptions.new(args)
-        expect(opt.proxy).to eq"#{user}@#{hostname}"
+        expect(opt.proxy).to eq "-i #{pem} #{user}@#{hostname}"
       end
 
       it "returns allows overshadowing of env" do
@@ -166,7 +177,7 @@ describe Canals::CanalOptions do
         overshadow_hostname = "*hostname*"
         args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "env" => env_name, "hostname" => overshadow_hostname}
         opt = Canals::CanalOptions.new(args)
-        expect(opt.proxy).to eq "#{user}@#{overshadow_hostname}"
+        expect(opt.proxy).to eq "-i #{pem} #{user}@#{overshadow_hostname}"
       end
     end
   end
