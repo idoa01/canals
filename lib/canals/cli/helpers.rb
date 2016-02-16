@@ -1,4 +1,5 @@
 require 'canals'
+require 'canals/version'
 require 'canals/tools/completion'
 
 module Canals
