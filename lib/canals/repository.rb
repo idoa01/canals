@@ -28,7 +28,7 @@ module Canals
 
     def add(options, save=true)
       @repo[TUNNELS][options.name] = options.to_hash
-      if options.env_name.nil? && options.env.is_default?
+      if options.env_name.nil? && !options.env.nil? && options.env.is_default?
         @repo[TUNNELS][options.name]["env"] = options.env.name
       end
       save! if save
@@ -56,7 +56,7 @@ module Canals
       end
     end
 
-    def environment(name)
+    def environment(name=nil)
       if name.nil?
         args = @repo[ENVIRONMENTS].select{ |n,e| e["default"] }.values[0]
       else
