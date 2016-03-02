@@ -2,7 +2,6 @@ require 'canals'
 require 'canals/options'
 require 'canals/environment'
 require 'thor'
-require 'pry'
 
 module Canals
   module Cli
@@ -23,7 +22,6 @@ module Canals
 
       desc 'commands', 'List all the base level commands'
       def commands(subcommand=nil)
-        #binding.pry
         thor_class = Canals::Cli::Application
         if !subcommand.nil?
           thor_class = thor_class.subcommand_classes[subcommand]
