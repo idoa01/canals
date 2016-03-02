@@ -14,8 +14,8 @@ module Canals
         return if session_empty?
         require 'terminal-table'
         require 'canals/core_ext/string'
-        columns = ["pid", "name", "socket"]
-        rows = Canals.session.map{ |s| columns.map{ |c| s[c.to_sym] } }
+        columns = ["pid", "name", "local_port", "socket"]
+        rows = Canals.session.map{ |s| columns.map{ |c| s[c.to_sym] || get_session_col_val(s, c) } }
         table = Terminal::Table.new :headings => columns.map{|c| c.sub("_"," ").titleize }, :rows => rows
         say table
       end
@@ -55,6 +55,15 @@ module Canals
           end
           say
           say "#{command} done.", :green
+        end
+
+        def get_session_col_val(session, key)
+          case key
+          when "local_port"
+            entry = Canals.repository.get(session[:name])
+            return entry.local_port if entry
+          end
+          nil
         end
 
         def session_empty?
