@@ -31,6 +31,29 @@ module Canals
         say "Tunnel #{name.inspect} created.", :green
       end
 
+      desc 'update NAME', "Update an existing tunnel"
+      method_option :remote_host, :type => :string, :desc => "The remote host of the tunnel"
+      method_option :remote_port, :type => :string, :desc => "The remote port of the tunnel"
+      method_option :local_port,  :type => :string, :desc => "The local port to use"
+      method_option :env,         :type => :string, :desc => "The proxy environment to use"
+      method_option :hostname,    :type => :string, :desc => "The proxy host we will use to connect through"
+      method_option :user,        :type => :string, :desc => "The user for the ssh proxy host"
+      def update(name)
+        tunnel = Canals.repository.get(name)
+        if tunnel.nil?
+          say "couldn't find tunnel #{name.inspect}. try using 'create' instead", :red
+          return
+        end
+        if options.empty?
+          say "you need to specify what to update. use `canal help update` to see a list of optional updates"
+          return
+        end
+        opts = tunnel.to_hash.merge(options)
+        opts = Canals::CanalOptions.new(opts)
+        Canals.create_tunnel(opts)
+        say "Tunnel #{name.inspect} updated.", :green
+      end
+
       desc 'start NAME', 'Start tunnel'
       def start(name)
         tstart(name)

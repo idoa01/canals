@@ -35,6 +35,7 @@ module Canals
     end
 
     def get(name)
+      return nil if !@repo[:tunnels].has_key? name
       CanalOptions.new(@repo[:tunnels][name])
     end
 

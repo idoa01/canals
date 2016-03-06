@@ -17,6 +17,10 @@ module Canals
       @env = Canals.repository.environment(@env_name)
     end
 
+    def to_s
+      return "CanalOptions<#{@args}>"
+    end
+
     def bind_address
       return @args["bind_address"] if @args["bind_address"]
       return Canals.config[:bind_address] if Canals.config[:bind_address]
