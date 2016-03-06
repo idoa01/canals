@@ -19,6 +19,7 @@ module Canals
 
     def bind_address
       return @args["bind_address"] if @args["bind_address"]
+      return Canals.config[:bind_address] if Canals.config[:bind_address]
       return BIND_ADDRESS
     end
 

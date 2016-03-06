@@ -8,6 +8,7 @@ describe Canals::CanalOptions do
   let(:remote_port) { 1234 }
   let(:local_port)  { 4321 }
   let(:bind_address)  { "1.2.3.4" }
+  let(:global_bind_address)  { "4.3.2.1" }
   let(:hostname)  { "nat.example.com" }
   let(:user)  { "user" }
   let(:pem)  { "/tmp/file.pem" }
@@ -81,15 +82,24 @@ describe Canals::CanalOptions do
 
   describe "bind_address" do
     it "returns 'bind_address' if 'bind_address' is availble" do
-      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port, "bind_address" => bind_address}
+      allow(Canals.config).to receive(:[]).with(:bind_address).and_return(global_bind_address)
+      args = {"name" => name, "remote_host" => remote_host, "remote_port"=> remote_port, "local_port" => local_port, "bind_address" => bind_address}
       opt = Canals::CanalOptions.new(args)
       expect(opt.bind_address).to eq bind_address
     end
 
-    it "returns 'Canals::CanalOptions::BIND_ADDRESS' for 'bind_address' if 'bind_address' isn't given" do
+    it "returns 'Canals::CanalOptions::BIND_ADDRESS' for 'bind_address' if 'bind_address' isn't given and no global bind_address" do
+      allow(Canals.config).to receive(:[]).with(:bind_address).and_return(nil)
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}
       opt = Canals::CanalOptions.new(args)
       expect(opt.bind_address).to eq Canals::CanalOptions::BIND_ADDRESS
+    end
+
+    it "returns 'Canals.config[:bind_address]' for 'bind_address' if 'bind_address' isn't given and global bind_address" do
+      allow(Canals.config).to receive(:[]).with(:bind_address).and_return(global_bind_address)
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}
+      opt = Canals::CanalOptions.new(args)
+      expect(opt.bind_address).to eq global_bind_address
     end
   end
 

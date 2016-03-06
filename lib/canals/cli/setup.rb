@@ -21,6 +21,12 @@ module Canals
         install_completion
       end
 
+      desc "bind-address", "Setup a global bind address (defaults to 127.0.0.1)"
+      def bind_address(bind)
+        Canals.config[:bind_address] = bind
+        Canals.config.save!
+      end
+
       no_commands do
         def setup_first_environment
           say "We'll start by setting up your first environment", :green
