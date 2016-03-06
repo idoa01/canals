@@ -31,7 +31,7 @@ module Canals
         if Canals.config[:completion_version]
           if Canals.config[:completion_version] != Canals::VERSION
             Canals::Tools::Completion.update_completion
-            say "bash completion script upgraded, use `source #{Canals::Tools::Completion.cmp_file}` to reload it", :red
+            say "Bash completion script upgraded, use `source #{Canals::Tools::Completion.cmp_file}` to reload it", :red
           end
         end
       end

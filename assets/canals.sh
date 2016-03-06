@@ -10,7 +10,7 @@ _canal_complete() {
   # Setup the base level (everything after "canal")
   if [ $COMP_CWORD -eq 1 ]; then
     COMPREPLY=( $(compgen \
-                  -W "create environment help repo restart session setup start stop" \
+                  -W "create environment help repo restart session setup start stop update" \
                   -- $cur) )
     return 0
   fi
@@ -18,7 +18,7 @@ _canal_complete() {
   # Setup the second level
   if [ $COMP_CWORD -eq 2 ]; then
     case "$prev" in
-      start|stop|restart)
+      start|stop|restart|update)
         COMPREPLY=( $(compgen \
                       -W "`canal list tunnels`" \
                       -- $cur) )

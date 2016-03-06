@@ -19,6 +19,7 @@ module Canals
       desc "completion", "Setup bash completion"
       def completion
         install_completion
+        say "Bash completion script upgraded, use `source #{Canals::Tools::Completion.cmp_file}` to reload it", :red
       end
 
       desc "bind-address", "Setup a global bind address (defaults to 127.0.0.1)"
