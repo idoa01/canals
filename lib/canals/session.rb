@@ -40,6 +40,11 @@ module Canals
       end
     end
 
+    def alive?(session_id)
+      sess = get(session_id)
+      File.exist?(sess[:socket])
+    end
+
     def save!
       FileUtils.mkdir_p(session_file.dirname)
       File.open(session_file, 'w') do |file|

@@ -1,5 +1,6 @@
 require 'canals'
 require 'canals/cli/helpers'
+require 'canals/core_ext/shell_colors'
 require 'thor'
 
 
@@ -15,8 +16,9 @@ module Canals
         require 'terminal-table'
         require 'canals/core_ext/string'
         columns = ["pid", "name", "local_port", "socket"]
-        rows = Canals.session.map{ |s| columns.map{ |c| s[c.to_sym] || get_session_col_val(s, c) } }
+        rows = Canals.session.map{ |s| columns.map{ |c| get_session_col_val(s, c) } }
         table = Terminal::Table.new :headings => columns.map{|c| c.sub("_"," ").titleize }, :rows => rows
+        table.align_column(2, :right)
         say table
       end
 
@@ -57,13 +59,28 @@ module Canals
           say "#{command} done.", :green
         end
 
+        def session_color(session)
+          pid = session[:pid]
+          @colors ||= {}
+          return @colors[pid] if @colors[pid]
+          alive = Canals.session.alive? pid
+          if alive
+            @colors[pid] = :white
+          else
+            @colors[pid] = [:dark_gray, :dim]
+          end
+        end
+
         def get_session_col_val(session, key)
-          case key
+          c = session_color(session)
+          val = case key
           when "local_port"
             entry = Canals.repository.get(session[:name])
-            return entry.local_port if entry
+            entry.local_port if entry
+          else
+            session[key.to_sym]
           end
-          nil
+          set_color(val, *c)
         end
 
         def session_empty?
