@@ -16,7 +16,8 @@ module Canals
         require 'terminal-table'
         require 'canals/core_ext/string'
         columns = ["up", "pid", "name", "local_port", "socket"]
-        rows = Canals.session.map{ |s| columns.map{ |c| session_col_val(s, c) } }
+        rows = Canals.session.sort{ |a,b| a[:name] <=> b[:name] }
+                             .map { |s| columns.map{ |c| session_col_val(s, c) } }
         table = Terminal::Table.new :headings => columns.map{|c| session_col_title(c) }, :rows => rows
         table.align_column(3, :right)
         say table
