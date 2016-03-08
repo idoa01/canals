@@ -15,10 +15,10 @@ module Canals
         return if session_empty?
         require 'terminal-table'
         require 'canals/core_ext/string'
-        columns = ["pid", "name", "local_port", "socket"]
-        rows = Canals.session.map{ |s| columns.map{ |c| get_session_col_val(s, c) } }
-        table = Terminal::Table.new :headings => columns.map{|c| c.sub("_"," ").titleize }, :rows => rows
-        table.align_column(2, :right)
+        columns = ["up", "pid", "name", "local_port", "socket"]
+        rows = Canals.session.map{ |s| columns.map{ |c| session_col_val(s, c) } }
+        table = Terminal::Table.new :headings => columns.map{|c| session_col_title(c) }, :rows => rows
+        table.align_column(3, :right)
         say table
       end
 
@@ -60,26 +60,39 @@ module Canals
         end
 
         def session_color(session)
-          pid = session[:pid]
-          @colors ||= {}
-          return @colors[pid] if @colors[pid]
-          alive = Canals.session.alive? pid
-          if alive
-            @colors[pid] = :white
+          if session_alive(session)
+            :white
           else
-            @colors[pid] = [:dark_gray, :dim]
+            [:dark_gray, :dim]
           end
         end
 
-        def get_session_col_val(session, key)
+        def session_alive(session)
+          @alive ||= {}
+          pid = session[:pid]
+          @alive[pid] ||= Canals.session.alive? pid
+        end
+
+        def session_col_title(col)
+          case col
+          when "pid"
+            "PID"
+          else
+            col.sub("_", " ").titleize
+          end
+        end
+
+        def session_col_val(session, key)
           c = session_color(session)
           val = case key
-          when "local_port"
-            entry = Canals.repository.get(session[:name])
-            entry.local_port if entry
-          else
-            session[key.to_sym]
-          end
+                when "local_port"
+                  entry = Canals.repository.get(session[:name])
+                  entry.local_port if entry
+                when "up"
+                  checkmark(session_alive(session))
+                else
+                  session[key.to_sym]
+                end
           set_color(val, *c)
         end
 

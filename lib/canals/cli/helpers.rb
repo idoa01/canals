@@ -35,6 +35,11 @@ module Canals
           end
         end
       end
+
+      # transform boolean into ✓ / ✗
+      def checkmark(bool)
+        bool ? "\u2713".encode('utf-8') : "\u2717".encode('utf-8')
+      end
     end
   end
 end
