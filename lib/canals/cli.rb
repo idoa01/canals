@@ -21,9 +21,10 @@ module Canals
       end
 
       desc 'create NAME REMOTE_HOST REMOTE_PORT [LOCAL_PORT]', "Create a new tunnel; if LOCAL_PORT isn't supplied, REMOTE_PORT will be used as LOCAL"
-      method_option :env,      :type => :string, :desc => "The proxy environment to use"
-      method_option :hostname, :type => :string, :desc => "The proxy host we will use to connect through"
-      method_option :user,     :type => :string, :desc => "The user for the ssh proxy host"
+      method_option :env,          :type => :string, :desc => "The proxy environment to use"
+      method_option :hostname,     :type => :string, :desc => "The proxy host we will use to connect through"
+      method_option :user,         :type => :string, :desc => "The user for the ssh proxy host"
+      method_option :bind_address, :type => :string, :desc => "The bind address to connect to"
       def create(name, remote_host, remote_port, local_port=nil)
         opts = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}.merge(options)
         opts = Canals::CanalOptions.new(opts)
@@ -32,12 +33,13 @@ module Canals
       end
 
       desc 'update NAME', "Update an existing tunnel"
-      method_option :remote_host, :type => :string, :desc => "The remote host of the tunnel"
-      method_option :remote_port, :type => :string, :desc => "The remote port of the tunnel"
-      method_option :local_port,  :type => :string, :desc => "The local port to use"
-      method_option :env,         :type => :string, :desc => "The proxy environment to use"
-      method_option :hostname,    :type => :string, :desc => "The proxy host we will use to connect through"
-      method_option :user,        :type => :string, :desc => "The user for the ssh proxy host"
+      method_option :remote_host,  :type => :string, :desc => "The remote host of the tunnel"
+      method_option :remote_port,  :type => :string, :desc => "The remote port of the tunnel"
+      method_option :local_port,   :type => :string, :desc => "The local port to use"
+      method_option :env,          :type => :string, :desc => "The proxy environment to use"
+      method_option :hostname,     :type => :string, :desc => "The proxy host we will use to connect through"
+      method_option :user,         :type => :string, :desc => "The user for the ssh proxy host"
+      method_option :bind_address, :type => :string, :desc => "The bind address to connect to"
       def update(name)
         tunnel = Canals.repository.get(name)
         if tunnel.nil?
