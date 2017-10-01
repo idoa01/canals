@@ -16,6 +16,11 @@ module Canals
         tunnel = Canals.repository.get(name)
         say "Created tunnel #{name.inspect} with pid #{pid}. You can access it using '#{tunnel.bind_address}:#{tunnel.local_port}'"
         pid
+      rescue Canals::Exception => e
+        tunnel = Canals.repository.get(name)
+        isalive = Canals.isalive? tunnel
+        say "Unable to create tunnel #{name.inspect}#{isalive ? ', A tunnel for ' + name.inspect + ' Already exists.' : ''}", :red
+        0
       end
 
       def trestart(name)

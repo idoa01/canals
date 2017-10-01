@@ -1,6 +1,9 @@
 require 'open3'
 
 module Canals
+
+  class Exception < ::RuntimeError; end
+
   class << self
 
     def create_tunnel(tunnel_opts)
@@ -11,7 +14,8 @@ module Canals
       if tunnel_opts.instance_of? String
         tunnel_opts = Canals.repository.get(tunnel_opts)
       end
-      tunnel_start(tunnel_opts)
+      exit_code = tunnel_start(tunnel_opts)
+      raise Canals::Exception, "could not start tunnel" unless exit_code.success?
       pid = tunnel_pid(tunnel_opts)
       Canals.session.add({name: tunnel_opts.name, pid: pid, socket: socket_file(tunnel_opts)})
       pid.to_i
@@ -45,8 +49,9 @@ module Canals
 
     def tunnel_start(tunnel_opts)
       FileUtils.mkdir_p("/tmp/canals")
-      cmd = "ssh -M -S #{socket_file(tunnel_opts)} -fnNT -L #{tunnel_opts.bind_address}:#{tunnel_opts.local_port}:#{tunnel_opts.remote_host}:#{tunnel_opts.remote_port} #{tunnel_opts.proxy}"
+      cmd = "ssh -M -S #{socket_file(tunnel_opts)} -o 'ExitOnForwardFailure yes' -fnNT -L #{tunnel_opts.bind_address}:#{tunnel_opts.local_port}:#{tunnel_opts.remote_host}:#{tunnel_opts.remote_port} #{tunnel_opts.proxy}"
       system(cmd)
+      $?
     end
 
     def tunnel_check(tunnel_opts)
