@@ -12,6 +12,7 @@ describe Canals::CanalOptions do
   let(:hostname)  { "nat.example.com" }
   let(:user)  { "user" }
   let(:pem)  { "/tmp/file.pem" }
+  let(:adhoc)  { true }
 
   describe "name" do
     it "contains 'name'" do
@@ -77,6 +78,20 @@ describe Canals::CanalOptions do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => "4321"}
       opt = Canals::CanalOptions.new(args)
       expect(opt.local_port).to eq 4321
+    end
+  end
+
+  describe "adhoc" do
+    it "returns 'adhoc' if 'adhoc' is availble" do
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "adhoc" => adhoc}
+      opt = Canals::CanalOptions.new(args)
+      expect(opt.adhoc).to eq adhoc
+    end
+
+    it "returns 'false' for 'adhoc' if 'adhoc' isn't given" do
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port}
+      opt = Canals::CanalOptions.new(args)
+      expect(opt.adhoc).to eq false
     end
   end
 
@@ -191,22 +206,60 @@ describe Canals::CanalOptions do
     end
   end
 
-
   describe "to_yaml" do
     it "dumps remote_port as int" do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => '1234'}
       yaml = Canals::CanalOptions.new(args).to_yaml
       reparsed = Psych.load(yaml)
-      expect(reparsed["remote_port"]).to eq 1234
-      expect(reparsed["local_port"]).to eq 1234
+      expect(reparsed[:remote_port]).to eq 1234
+      expect(reparsed[:local_port]).to eq 1234
     end
 
     it "dumps local_port as int" do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => "4321"}
       yaml = Canals::CanalOptions.new(args).to_yaml
       reparsed = Psych.load(yaml)
-      expect(reparsed["local_port"]).to eq 4321
+      expect(reparsed[:local_port]).to eq 4321
+    end
+  end
+
+  describe "to_hash" do
+    it "dumps remote_port as int" do
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => '1234'}
+      reparsed = Canals::CanalOptions.new(args).to_hash
+      expect(reparsed[:remote_port]).to eq 1234
+      expect(reparsed[:local_port]).to eq 1234
+    end
+
+    it "dumps local_port as int" do
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => "4321"}
+      reparsed = Canals::CanalOptions.new(args).to_hash
+      expect(reparsed[:local_port]).to eq 4321
+    end
+
+    it "turns keys into symbols" do
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => "4321"}
+      reparsed = Canals::CanalOptions.new(args).to_hash
+      expect(reparsed.keys).to all be_an(Symbol)
+    end
+
+    it "doesn't add function output when not passed with a 'explode' param" do
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => "4321"}
+      reparsed = Canals::CanalOptions.new(args).to_hash
+      expect(reparsed[:bind_address]).to eq nil
+    end
+
+    it "doesn't add function output when passed with 'basic'" do
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => "4321"}
+      reparsed = Canals::CanalOptions.new(args).to_hash :basic
+      expect(reparsed[:bind_address]).to eq nil
+    end
+
+    it "adds function output when passed with 'full'" do
+      allow(Canals.config).to receive(:[]).with(:bind_address).and_return(global_bind_address)
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => "4321"}
+      reparsed = Canals::CanalOptions.new(args).to_hash :full
+      expect(reparsed[:bind_address]).to eq global_bind_address
     end
   end
 end
-

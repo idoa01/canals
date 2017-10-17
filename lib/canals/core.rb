@@ -18,10 +18,7 @@ module Canals
       raise Canals::Exception, "could not start tunnel" unless exit_code.success?
       pid = tunnel_pid(tunnel_opts)
       session_data = {name: tunnel_opts.name, pid: pid, socket: socket_file(tunnel_opts)}
-      if tunnel_opts.adhoc
-        session_data[:adhoc] = true
-        session_data[:local_port] = tunnel_opts.local_port
-      end
+      session_data.merge!(tunnel_opts.to_hash(:full)) if tunnel_opts.adhoc
       Canals.session.add(session_data)
       pid.to_i
     end
