@@ -5,7 +5,7 @@ module Canals
 
   class CanalOptions
     BIND_ADDRESS = "127.0.0.1"
-    attr_reader :name, :remote_host, :remote_port, :local_port, :env_name, :env
+    attr_reader :name, :remote_host, :remote_port, :local_port, :env_name, :env, :adhoc
 
     def initialize(args)
       @args = validate?(args)
@@ -13,6 +13,7 @@ module Canals
       @remote_host = @args["remote_host"]
       @remote_port = @args["remote_port"]
       @local_port = @args["local_port"]
+      @adhoc = @args["adhoc"] || false
       @env_name = @args['env']
       @env = Canals.repository.environment(@env_name)
     end

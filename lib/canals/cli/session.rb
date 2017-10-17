@@ -87,8 +87,12 @@ module Canals
           c = session_color(session)
           val = case key
                 when "local_port"
-                  entry = Canals.repository.get(session[:name])
-                  entry.local_port if entry
+                  if session[key.to_sym]
+                    session[key.to_sym]
+                  else
+                    entry = Canals.repository.get(session[:name])
+                    entry.local_port if entry
+                  end
                 when "up"
                   checkmark(session_alive(session))
                 else

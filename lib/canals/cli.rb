@@ -104,6 +104,19 @@ module Canals
         say "* use --full to show more data", [:white, :dim] if !options[:full]
       end
 
+      desc "adhoc REMOTE_HOST REMOTE_PORT [LOCAL_PORT]", "Create and run a new tunnel, without keeping it in the repository; if LOCAL_PORT isn't supplied, REMOTE_PORT will be used as LOCAL"
+      method_option :name,         :type => :string, :desc => "The name to use for the tunnel, if not supplied a template will be generated"
+      method_option :env,          :type => :string, :desc => "The proxy environment to use"
+      method_option :hostname,     :type => :string, :desc => "The proxy host we will use to connect through"
+      method_option :user,         :type => :string, :desc => "The user for the ssh proxy host"
+      method_option :bind_address, :type => :string, :desc => "The bind address to connect to"
+      def adhoc(remote_host, remote_port, local_port=nil)
+        opts = {"adhoc" => true, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}.merge(options)
+        opts["name"] ||= "adhoc_#{remote_host}_#{remote_port}"
+        opts = Canals::CanalOptions.new(opts)
+        tstart(opts)
+      end
+
       desc "environment SUBCOMMAND", "Environment related command (use 'canal environment help' to find out more)"
       subcommand "environment", Canals::Cli::Environment
 

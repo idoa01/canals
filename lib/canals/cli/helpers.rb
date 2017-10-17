@@ -11,15 +11,19 @@ module Canals
         say "Tunnel #{name.inspect} stopped."
       end
 
-      def tstart(name)
-        pid = Canals.start(name)
-        tunnel = Canals.repository.get(name)
-        say "Created tunnel #{name.inspect} with pid #{pid}. You can access it using '#{tunnel.bind_address}:#{tunnel.local_port}'"
+      def tstart(tunnel_opts)
+        if tunnel_opts.instance_of? String
+          tunnel_opts = Canals.repository.get(tunnel_opts)
+        end
+        pid = Canals.start(tunnel_opts)
+        say "Created tunnel #{tunnel_opts.name.inspect} with pid #{pid}. You can access it using '#{tunnel_opts.bind_address}:#{tunnel_opts.local_port}'"
         pid
       rescue Canals::Exception => e
-        tunnel = Canals.repository.get(name)
-        isalive = Canals.isalive? tunnel
-        say "Unable to create tunnel #{name.inspect}#{isalive ? ', A tunnel for ' + name.inspect + ' Already exists.' : ''}", :red
+        if tunnel_opts.instance_of? String
+          tunnel_opts = Canals.repository.get(tunnel_opts)
+        end
+        isalive = Canals.isalive? tunnel_opts
+        say "Unable to create tunnel #{tunnel_opts.name.inspect}#{isalive ? ', A tunnel for ' + tunnel_opts.name.inspect + ' Already exists.' : ''}", :red
         0
       end
 
