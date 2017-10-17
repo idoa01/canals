@@ -25,7 +25,11 @@ module Canals
 
     def stop(tunnel_opts)
       if tunnel_opts.instance_of? String
-        tunnel_opts = Canals.repository.get(tunnel_opts)
+        if (Canals.repository.has?(tunnel_opts))
+          tunnel_opts = Canals.repository.get(tunnel_opts)
+        else
+          tunnel_opts = Canals.session.get_obj(tunnel_opts)
+        end
       end
       tunnel_close(tunnel_opts)
       Canals.session.del(tunnel_opts.name)

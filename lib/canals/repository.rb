@@ -39,6 +39,10 @@ module Canals
       CanalOptions.new(@repo[:tunnels][name])
     end
 
+    def has?(name)
+      return @repo[:tunnels].has_key? name
+    end
+
     def add_environment(environment, save=true)
       if environment.is_default?
         @repo[ENVIRONMENTS].each { |name, env| env.delete("default") }

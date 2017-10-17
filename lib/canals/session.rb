@@ -40,6 +40,14 @@ module Canals
       end
     end
 
+    def get_obj(session_id)
+      CanalOptions.new(get(session_id))
+    end
+
+    def has?(session_id)
+      get(session_id) != nil
+    end
+
     def alive?(session_id)
       sess = get(session_id)
       File.exist?(sess[:socket])
