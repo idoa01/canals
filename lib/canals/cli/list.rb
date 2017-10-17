@@ -20,6 +20,12 @@ module Canals
         say tunnels.sort.join " "
       end
 
+      desc 'session', 'List the tunnels in the current session'
+      def session
+        tunnels = Canals.session.map{ |conf| conf[:name] }
+        say tunnels.sort.join " "
+      end
+
       desc 'commands', 'List all the base level commands'
       def commands(subcommand=nil)
         thor_class = Canals::Cli::Application

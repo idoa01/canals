@@ -18,9 +18,14 @@ _canal_complete() {
   # Setup the second level
   if [ $COMP_CWORD -eq 2 ]; then
     case "$prev" in
-      start|stop|restart|update)
+      start|update)
         COMPREPLY=( $(compgen \
                       -W "`canal list tunnels`" \
+                      -- $cur) )
+        ;;
+      stop|restart)
+        COMPREPLY=( $(compgen \
+                      -W "`canal list session`" \
                       -- $cur) )
         ;;
       environment)
