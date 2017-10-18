@@ -6,30 +6,44 @@ module Canals
   module Cli
     module Helpers
 
-      def tstop(name)
-        Canals.stop(name)
-        say "Tunnel #{name.inspect} stopped."
+      def tstop(tunnel_opts)
+        if tunnel_opts.instance_of? String
+          tunnel_opts = tunnel_options(tunnel_opts)
+        end
+        Canals.stop(tunnel_opts)
+        say "Tunnel #{tunnel_opts.name.inspect} stopped."
       end
 
       def tstart(tunnel_opts)
         if tunnel_opts.instance_of? String
-          tunnel_opts = Canals.repository.get(tunnel_opts)
+          tunnel_opts = tunnel_options(tunnel_opts)
         end
         pid = Canals.start(tunnel_opts)
         say "Created tunnel #{tunnel_opts.name.inspect} with pid #{pid}. You can access it using '#{tunnel_opts.bind_address}:#{tunnel_opts.local_port}'"
         pid
       rescue Canals::Exception => e
         if tunnel_opts.instance_of? String
-          tunnel_opts = Canals.repository.get(tunnel_opts)
+          tunnel_opts = tunnel_options(tunnel_opts)
         end
         isalive = Canals.isalive? tunnel_opts
         say "Unable to create tunnel #{tunnel_opts.name.inspect}#{isalive ? ', A tunnel for ' + tunnel_opts.name.inspect + ' Already exists.' : ''}", :red
         0
       end
 
-      def trestart(name)
-        tstop(name)
-        tstart(name)
+      def trestart(tunnel_opts)
+        if tunnel_opts.instance_of? String
+          tunnel_opts = tunnel_options(tunnel_opts)
+        end
+        tstop(tunnel_opts)
+        tstart(tunnel_opts)
+      end
+
+      def tunnel_options(name)
+        if (Canals.repository.has?(name))
+          Canals.repository.get(name)
+        else
+          Canals.session.get_obj(name)
+        end
       end
 
       def startup_checks
