@@ -41,8 +41,10 @@ module Canals
       def tunnel_options(name)
         if (Canals.repository.has?(name))
           Canals.repository.get(name)
-        else
+        elsif (Canals.session.has?(name))
           Canals.session.get_obj(name)
+        else
+          raise Thor::Error.new "Unable to find tunnel #{name.inspect}."
         end
       end
 
