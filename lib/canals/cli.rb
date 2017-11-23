@@ -38,6 +38,18 @@ module Canals
         say "Tunnel #{name.inspect} created.", :green
       end
 
+      desc 'delete NAME', "Delete an existing tunnel; if tunnel is active, stop it first"
+      def delete(name)
+        tunnel = Canals.repository.get(name)
+        if tunnel.nil?
+          say "couldn't find tunnel #{name.inspect}. try using 'create' instead", :red
+          return
+        end
+        tstop(name, silent: true)
+        Canals.repository.delete(name)
+        say "Tunnel #{name.inspect} deleted.", :green
+      end
+
       desc 'update NAME', "Update an existing tunnel"
       method_option :remote_host,  :type => :string, :desc => "The remote host of the tunnel"
       method_option :remote_port,  :type => :string, :desc => "The remote port of the tunnel"

@@ -34,6 +34,11 @@ module Canals
       save! if save
     end
 
+    def delete(name, save=true)
+      @repo[TUNNELS].delete(name)
+      save! if save
+    end
+
     def get(name)
       return nil if !@repo[:tunnels].has_key? name
       CanalOptions.new(@repo[:tunnels][name])

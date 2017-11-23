@@ -6,20 +6,20 @@ module Canals
   module Cli
     module Helpers
 
-      def tstop(tunnel_opts)
+      def tstop(tunnel_opts, silent: false)
         if tunnel_opts.instance_of? String
           tunnel_opts = tunnel_options(tunnel_opts)
         end
         Canals.stop(tunnel_opts)
-        say "Tunnel #{tunnel_opts.name.inspect} stopped."
+        say "Tunnel #{tunnel_opts.name.inspect} stopped." unless silent
       end
 
-      def tstart(tunnel_opts)
+      def tstart(tunnel_opts, silent: false)
         if tunnel_opts.instance_of? String
           tunnel_opts = tunnel_options(tunnel_opts)
         end
         pid = Canals.start(tunnel_opts)
-        say "Created tunnel #{tunnel_opts.name.inspect} with pid #{pid}. You can access it using '#{tunnel_opts.bind_address}:#{tunnel_opts.local_port}'"
+        say "Created tunnel #{tunnel_opts.name.inspect} with pid #{pid}. You can access it using '#{tunnel_opts.bind_address}:#{tunnel_opts.local_port}'" unless silent
         pid
       rescue Canals::Exception => e
         if tunnel_opts.instance_of? String
