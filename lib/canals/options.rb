@@ -5,15 +5,24 @@ module Canals
 
   class CanalOptions
     BIND_ADDRESS = "127.0.0.1"
-    attr_reader :name, :remote_host, :remote_port, :local_port, :env_name, :env
+    attr_reader :name, :remote_host, :remote_port, :local_port, :env_name, :env, :adhoc
+
+    # define setters
+    [:name, :local_port, :adhoc].each do |attribute|
+      define_method :"#{attribute}=" do |value|
+        @args[attribute] = value
+        self.instance_variable_set(:"@#{attribute}", value)
+      end
+    end
 
     def initialize(args)
-      @args = validate?(args)
+      @original_args = validate?(args)
+      @args = Marshal.load(Marshal.dump(@original_args))
       @name = @args[:name]
       @remote_host = @args[:remote_host]
       @remote_port = @args[:remote_port]
       @local_port = @args[:local_port]
-      @adhoc = @args[:adhoc]
+      @adhoc = @args[:adhoc] || false
       @env_name = @args[:env]
       @env = Canals.repository.environment(@env_name)
     end
@@ -38,10 +47,6 @@ module Canals
 
     def pem
       get_env_var(:pem)
-    end
-
-    def adhoc
-      @adhoc || false
     end
 
     def proxy

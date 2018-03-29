@@ -7,6 +7,8 @@ module Canals
     include Enumerable
     extend Forwardable
 
+    BASIC_FIELDS = [:name, :pid, :socket]
+
     def initialize
       @session = load_session(session_file)
     end
@@ -15,6 +17,10 @@ module Canals
 
     def each(&block)
       @session.each(&block)
+    end
+
+    def each_obj(&block)
+      @session.map{|sess| CanalOptions.new(fill_from_repository(sess))}.each(&block)
     end
 
     def empty?
@@ -32,16 +38,20 @@ module Canals
     end
 
     def get(session_id)
+      sess = nil
       case session_id
       when Numeric
-        @session.find{ |s| s[:pid] == session_id }
+        sess = @session.find{ |s| s[:pid] == session_id }
       when String
-        @session.find{ |s| s[:name] == session_id }
+        sess = @session.find{ |s| s[:name] == session_id }
       end
+      fill_from_repository(sess) if sess
     end
 
     def get_obj(session_id)
-      CanalOptions.new(get(session_id))
+      sess = get(session_id)
+      return nil if sess.nil?
+      CanalOptions.new(sess)
     end
 
     def has?(session_id)
@@ -71,6 +81,18 @@ module Canals
       valid_file = _session_file && _session_file.exist? && !_session_file.size.zero?
       return [] if !valid_file
       return Psych.load_file(_session_file)
+    end
+
+    def basic?(sess)
+      (sess.keys - BASIC_FIELDS).empty?
+    end
+
+    def fill_from_repository(sess)
+      if (basic?(sess) && Canals.repository.has?(sess[:name]))
+        Canals.repository.get(sess[:name]).to_hash.merge(sess)
+      else
+        sess
+      end
     end
 
   end

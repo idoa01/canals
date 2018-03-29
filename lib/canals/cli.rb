@@ -75,8 +75,15 @@ module Canals
       end
 
       desc 'start NAME', 'Start tunnel'
+      method_option :local_port,   :type => :numeric, :desc => "The local port to use"
       def start(name)
-        tstart(name)
+        tunnel = tunnel_options(name)
+        if options["local_port"]
+          tunnel.local_port = options["local_port"]
+          tunnel.name = "adhoc-#{name}-#{options["local_port"]}"
+          tunnel.adhoc = true
+        end
+        tstart(tunnel)
       end
 
       desc 'stop NAME', 'Stop tunnel'
