@@ -124,7 +124,7 @@ module Canals
       method_option :bind_address, :type => :string, :desc => "The bind address to connect to"
       def adhoc(remote_host, remote_port, local_port=nil)
         opts = {"adhoc" => true, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}.merge(options)
-        opts["name"] ||= "adhoc_#{remote_host}_#{remote_port}"
+        opts["name"] ||= "adhoc-#{remote_host}-#{remote_port}"
         opts = Canals::CanalOptions.new(opts)
         tstart(opts)
       end
