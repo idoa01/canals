@@ -10,7 +10,7 @@ _canal_complete() {
   # Setup the base level (everything after "canal")
   if [ $COMP_CWORD -eq 1 ]; then
     COMPREPLY=( $(compgen \
-                  -W "create environment help repo restart session setup start stop update" \
+                  -W "adhoc create environment help repo restart session setup start stop update" \
                   -- $cur) )
     return 0
   fi
@@ -18,9 +18,14 @@ _canal_complete() {
   # Setup the second level
   if [ $COMP_CWORD -eq 2 ]; then
     case "$prev" in
-      start|stop|restart|update)
+      start|update)
         COMPREPLY=( $(compgen \
                       -W "`canal list tunnels`" \
+                      -- $cur) )
+        ;;
+      stop|restart)
+        COMPREPLY=( $(compgen \
+                      -W "`canal list session`" \
                       -- $cur) )
         ;;
       environment)

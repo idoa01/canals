@@ -25,36 +25,36 @@ module Canals
 
       desc "restore", "Restore the connection to tunnels which aren't working"
       def restore
-        on_all_canals_in_session(:restore) do |name|
-          if Canals.isalive? name
-            say "Canal #{name.inspect} is running."
+        on_all_canals_in_session(:restore) do |canal|
+          if Canals.isalive? canal
+            say "Canal #{canal.name.inspect} is running."
           else
-            Canals.session.del(name)
-            tstart(name)
+            Canals.session.del(canal.name)
+            tstart(canal)
           end
         end
       end
 
       desc "restart", "Restart the current session (closing and starting all connections)"
       def restart
-        on_all_canals_in_session(:restart) do |name|
-          trestart(name)
+        on_all_canals_in_session(:restart) do |canal|
+          trestart(canal)
         end
       end
 
       desc "stop", "Stop the current session"
       def stop
-        on_all_canals_in_session(:stop) do |name|
-          tstop(name)
+        on_all_canals_in_session(:stop) do |canal|
+          tstop(canal)
         end
       end
 
       no_commands do
         def on_all_canals_in_session(command, &block)
           return if session_empty?
-          Canals.session.map{|s| s[:name]}.each do |name|
-            say "#{command.to_s.capitalize} canal #{name.inspect}:", :green
-            block.call(name)
+          Canals.session.each_obj do |canal|
+            say "#{command.to_s.capitalize} canal #{canal.name.inspect}:", :green
+            block.call(canal)
           end
           say
           say "#{command} done.", :green
@@ -87,8 +87,12 @@ module Canals
           c = session_color(session)
           val = case key
                 when "local_port"
-                  entry = Canals.repository.get(session[:name])
-                  entry.local_port if entry
+                  if session[key.to_sym]
+                    session[key.to_sym]
+                  else
+                    entry = Canals.repository.get(session[:name])
+                    entry.local_port if entry
+                  end
                 when "up"
                   checkmark(session_alive(session))
                 else

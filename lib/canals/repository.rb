@@ -29,14 +29,23 @@ module Canals
     def add(options, save=true)
       @repo[TUNNELS][options.name] = options.to_hash
       if options.env_name.nil? && !options.env.nil? && options.env.is_default?
-        @repo[TUNNELS][options.name]["env"] = options.env.name
+        @repo[TUNNELS][options.name][:env] = options.env.name
       end
+      save! if save
+    end
+
+    def delete(name, save=true)
+      @repo[TUNNELS].delete(name)
       save! if save
     end
 
     def get(name)
       return nil if !@repo[:tunnels].has_key? name
       CanalOptions.new(@repo[:tunnels][name])
+    end
+
+    def has?(name)
+      return @repo[:tunnels].has_key? name
     end
 
     def add_environment(environment, save=true)

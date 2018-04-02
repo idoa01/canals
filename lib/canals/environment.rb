@@ -7,24 +7,24 @@ module Canals
     attr_reader :name, :user, :hostname, :pem
     def initialize(args)
       @args = validate?(args)
-      @name = @args["name"]
-      @user = @args["user"]
-      @hostname = @args["hostname"]
-      @pem = @args["pem"]
+      @name = @args[:name]
+      @user = @args[:user]
+      @hostname = @args[:hostname]
+      @pem = @args[:pem]
     end
 
     def validate?(args)
-      vargs = args.dup
-      raise CanalEnvironmentError.new("Missing option: \"name\" in environment creation") if args["name"].nil?
+      vargs = args.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
+      raise CanalEnvironmentError.new("Missing option: \"name\" in environment creation") if vargs[:name].nil?
       vargs
     end
 
     def default=(val)
-      @args["default"] = !!val
+      @args[:default] = !!val
     end
 
     def is_default?
-      !!@args["default"]
+      !!@args[:default]
     end
 
     def to_yaml
@@ -32,7 +32,7 @@ module Canals
     end
 
     def to_hash
-      @args.dup
+      Marshal.load(Marshal.dump(@args))
     end
 
   end

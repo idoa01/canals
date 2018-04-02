@@ -17,13 +17,19 @@ module Canals
       exit_code = tunnel_start(tunnel_opts)
       raise Canals::Exception, "could not start tunnel" unless exit_code.success?
       pid = tunnel_pid(tunnel_opts)
-      Canals.session.add({name: tunnel_opts.name, pid: pid, socket: socket_file(tunnel_opts)})
+      session_data = {name: tunnel_opts.name, pid: pid, socket: socket_file(tunnel_opts)}
+      session_data = tunnel_opts.to_hash(:full).merge(session_data) if tunnel_opts.adhoc
+      Canals.session.add(session_data)
       pid.to_i
     end
 
     def stop(tunnel_opts)
       if tunnel_opts.instance_of? String
-        tunnel_opts = Canals.repository.get(tunnel_opts)
+        if (Canals.repository.has?(tunnel_opts))
+          tunnel_opts = Canals.repository.get(tunnel_opts)
+        else
+          tunnel_opts = Canals.session.get_obj(tunnel_opts)
+        end
       end
       tunnel_close(tunnel_opts)
       Canals.session.del(tunnel_opts.name)
@@ -36,7 +42,11 @@ module Canals
 
     def isalive?(tunnel_opts)
       if tunnel_opts.instance_of? String
-        tunnel_opts = Canals.repository.get(tunnel_opts)
+        if (Canals.repository.has?(tunnel_opts))
+          tunnel_opts = Canals.repository.get(tunnel_opts)
+        else
+          tunnel_opts = Canals.session.get_obj(tunnel_opts)
+        end
       end
       !!tunnel_pid(tunnel_opts)
     end

@@ -6,26 +6,46 @@ module Canals
   module Cli
     module Helpers
 
-      def tstop(name)
-        Canals.stop(name)
-        say "Tunnel #{name.inspect} stopped."
+      def tstop(tunnel_opts, silent: false)
+        if tunnel_opts.instance_of? String
+          tunnel_opts = tunnel_options(tunnel_opts)
+        end
+        Canals.stop(tunnel_opts)
+        say "Tunnel #{tunnel_opts.name.inspect} stopped." unless silent
       end
 
-      def tstart(name)
-        pid = Canals.start(name)
-        tunnel = Canals.repository.get(name)
-        say "Created tunnel #{name.inspect} with pid #{pid}. You can access it using '#{tunnel.bind_address}:#{tunnel.local_port}'"
+      def tstart(tunnel_opts, silent: false)
+        if tunnel_opts.instance_of? String
+          tunnel_opts = tunnel_options(tunnel_opts)
+        end
+        pid = Canals.start(tunnel_opts)
+        say "Created tunnel #{tunnel_opts.name.inspect} with pid #{pid}. You can access it using '#{tunnel_opts.bind_address}:#{tunnel_opts.local_port}'" unless silent
         pid
       rescue Canals::Exception => e
-        tunnel = Canals.repository.get(name)
-        isalive = Canals.isalive? tunnel
-        say "Unable to create tunnel #{name.inspect}#{isalive ? ', A tunnel for ' + name.inspect + ' Already exists.' : ''}", :red
+        if tunnel_opts.instance_of? String
+          tunnel_opts = tunnel_options(tunnel_opts)
+        end
+        isalive = Canals.isalive? tunnel_opts
+        say "Unable to create tunnel #{tunnel_opts.name.inspect}#{isalive ? ', A tunnel for ' + tunnel_opts.name.inspect + ' Already exists.' : ''}", :red
         0
       end
 
-      def trestart(name)
-        tstop(name)
-        tstart(name)
+      def trestart(tunnel_opts)
+        if tunnel_opts.instance_of? String
+          tunnel_opts = tunnel_options(tunnel_opts)
+        end
+        tstop(tunnel_opts)
+        tstart(tunnel_opts)
+      end
+
+      def tunnel_options(name)
+        if (Canals.session.has?(name))
+          Canals.session.get_obj(name)
+        elsif (Canals.repository.has?(name))
+          Canals.repository.get(name)
+        else
+          raise Thor::Error.new "Unable to find tunnel #{name.inspect}."
+        end
       end
 
       def startup_checks

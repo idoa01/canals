@@ -38,6 +38,18 @@ module Canals
         say "Tunnel #{name.inspect} created.", :green
       end
 
+      desc 'delete NAME', "Delete an existing tunnel; if tunnel is active, stop it first"
+      def delete(name)
+        tunnel = Canals.repository.get(name)
+        if tunnel.nil?
+          say "couldn't find tunnel #{name.inspect}. try using 'create' instead", :red
+          return
+        end
+        tstop(name, silent: true)
+        Canals.repository.delete(name)
+        say "Tunnel #{name.inspect} deleted.", :green
+      end
+
       desc 'update NAME', "Update an existing tunnel"
       method_option :remote_host,  :type => :string, :desc => "The remote host of the tunnel"
       method_option :remote_port,  :type => :string, :desc => "The remote port of the tunnel"
@@ -63,8 +75,15 @@ module Canals
       end
 
       desc 'start NAME', 'Start tunnel'
+      method_option :local_port,   :type => :numeric, :desc => "The local port to use"
       def start(name)
-        tstart(name)
+        tunnel = tunnel_options(name)
+        if options["local_port"]
+          tunnel.local_port = options["local_port"]
+          tunnel.name = "adhoc-#{name}-#{options["local_port"]}"
+          tunnel.adhoc = true
+        end
+        tstart(tunnel)
       end
 
       desc 'stop NAME', 'Stop tunnel'
@@ -102,6 +121,19 @@ module Canals
         table = Terminal::Table.new :headings => columns.map{|c| c.sub("_"," ").titleize }, :rows => rows
         say table
         say "* use --full to show more data", [:white, :dim] if !options[:full]
+      end
+
+      desc "adhoc REMOTE_HOST REMOTE_PORT [LOCAL_PORT]", "Create and run a new tunnel, without keeping it in the repository; if LOCAL_PORT isn't supplied, REMOTE_PORT will be used as LOCAL"
+      method_option :name,         :type => :string, :desc => "The name to use for the tunnel, if not supplied a template will be generated"
+      method_option :env,          :type => :string, :desc => "The proxy environment to use"
+      method_option :hostname,     :type => :string, :desc => "The proxy host we will use to connect through"
+      method_option :user,         :type => :string, :desc => "The user for the ssh proxy host"
+      method_option :bind_address, :type => :string, :desc => "The bind address to connect to"
+      def adhoc(remote_host, remote_port, local_port=nil)
+        opts = {"adhoc" => true, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}.merge(options)
+        opts["name"] ||= "adhoc-#{remote_host}-#{remote_port}"
+        opts = Canals::CanalOptions.new(opts)
+        tstart(opts)
       end
 
       desc "environment SUBCOMMAND", "Environment related command (use 'canal environment help' to find out more)"

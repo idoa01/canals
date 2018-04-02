@@ -67,10 +67,18 @@ describe Canals::Environment do
       args = {"name" => name, "default" => true}
       env = Canals::Environment.new(args)
       expect(env.is_default?).to eq true
-      expect(env.to_hash["default"]).to eq true
+      expect(env.to_hash[:default]).to eq true
       env.default = false
       expect(env.is_default?).to eq false
-      expect(env.to_hash["default"]).to eq false
+      expect(env.to_hash[:default]).to eq false
+    end
+  end
+
+  describe "to_hash" do
+    it "turns keys into symbols" do
+      args = {"name" => name, "default" => false}
+      reparsed = Canals::Environment.new(args).to_hash
+      expect(reparsed.keys).to all be_an(Symbol)
     end
   end
 end
