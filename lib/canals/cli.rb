@@ -32,7 +32,7 @@ module Canals
       method_option :user,         :type => :string, :desc => "The user for the ssh proxy host"
       method_option :bind_address, :type => :string, :desc => "The bind address to connect to"
       def create(name, remote_host, remote_port, local_port=nil)
-        opts = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}.merge(options)
+        opts = {name: name, remote_host: remote_host, remote_port: remote_port, local_port: local_port}.merge(options)
         opts = Canals::CanalOptions.new(opts)
         Canals.create_tunnel(opts)
         say "Tunnel #{name.inspect} created.", :green
@@ -40,13 +40,13 @@ module Canals
 
       desc 'delete NAME', "Delete an existing tunnel; if tunnel is active, stop it first"
       def delete(name)
-        tunnel = Canals.repository.get(name)
+        tunnel = Canals.repository.get(name.to_sym)
         if tunnel.nil?
           say "couldn't find tunnel #{name.inspect}. try using 'create' instead", :red
           return
         end
         tstop(name, silent: true)
-        Canals.repository.delete(name)
+        Canals.repository.delete(name.to_sym)
         say "Tunnel #{name.inspect} deleted.", :green
       end
 
@@ -59,7 +59,7 @@ module Canals
       method_option :user,         :type => :string, :desc => "The user for the ssh proxy host"
       method_option :bind_address, :type => :string, :desc => "The bind address to connect to"
       def update(name)
-        tunnel = Canals.repository.get(name)
+        tunnel = Canals.repository.get(name.to_sym)
         if tunnel.nil?
           say "couldn't find tunnel #{name.inspect}. try using 'create' instead", :red
           return

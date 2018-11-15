@@ -3,7 +3,6 @@ require 'canals/options'
 require 'canals/environment'
 require 'thor'
 
-
 module Canals
   module Cli
     class Environment < Thor
@@ -19,8 +18,8 @@ module Canals
           host = hostname
           user = nil
         end
-        opts = {"name" => name, "hostname" => host}.merge(options)
-        opts["user"] = user if !user.nil?
+        opts = {name: name, hostname: host}.merge(options)
+        opts[:user] = user if !user.nil?
         env = Canals::Environment.new(opts)
         Canals.repository.add_environment(env)
       end

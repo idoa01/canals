@@ -1,6 +1,6 @@
-require 'psych'
 require 'pathname'
 require 'forwardable'
+require 'canals/tools/yaml'
 
 module Canals
   class Config
@@ -16,14 +16,12 @@ module Canals
     def load_config(config_file)
       valid_file = config_file && config_file.exist? && !config_file.size.zero?
       return {} if !valid_file
-      return Psych.load_file(config_file)
+      return Canals::Tools::YAML.load_file(config_file)
     end
 
     def save!
       FileUtils.mkdir_p(global_config_file.dirname)
-      File.open(global_config_file, 'w') do |file|
-        file.write(Psych.dump(@config))
-      end
+      Canals::Tools::YAML.dump_file(global_config_file, @config)
     end
 
     private

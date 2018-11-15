@@ -1,5 +1,5 @@
 require 'canals/options'
-require 'psych'
+require 'canals/tools/yaml'
 
 describe Canals::CanalOptions do
 
@@ -210,7 +210,7 @@ describe Canals::CanalOptions do
     it "dumps remote_port as int" do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => '1234'}
       yaml = Canals::CanalOptions.new(args).to_yaml
-      reparsed = Psych.load(yaml)
+      reparsed = Canals::Tools::YAML.load(yaml)
       expect(reparsed[:remote_port]).to eq 1234
       expect(reparsed[:local_port]).to eq 1234
     end
@@ -218,7 +218,7 @@ describe Canals::CanalOptions do
     it "dumps local_port as int" do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => "4321"}
       yaml = Canals::CanalOptions.new(args).to_yaml
-      reparsed = Psych.load(yaml)
+      reparsed = Canals::Tools::YAML.load(yaml)
       expect(reparsed[:local_port]).to eq 4321
     end
   end

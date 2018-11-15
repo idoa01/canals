@@ -1,4 +1,4 @@
-require 'psych'
+require 'canals/tools/yaml'
 
 module Canals
   CanalOptionError = Class.new StandardError
@@ -57,7 +57,7 @@ module Canals
     end
 
     def to_yaml
-      Psych.dump(@args)
+      Canals::Tools::YAML.to_yaml(@args)
     end
 
     def to_hash(mode=:basic)
