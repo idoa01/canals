@@ -136,6 +136,18 @@ module Canals
         tstart(opts)
       end
 
+
+      desc "socks HOSTNAME LOCAL_PORT", "Create and run a socks connection"
+      method_option :name,         :type => :string, :desc => "The name to use for the socks tunnel, if not supplied a template will be generated"
+      method_option :user,         :type => :string, :desc => "The user for the ssh socks host"
+      method_option :bind_address, :type => :string, :desc => "The bind address to connect to"
+      def socks(hostname, local_port)
+        opts = {"adhoc" => true, "socks" => true, "hostname" => hostname, "local_port" => local_port}.merge(options)
+        opts["name"] ||= "SOCKS-adhoc-#{hostname}-#{local_port}"
+        opts = Canals::CanalOptions.new(opts)
+        tstart(opts)
+      end
+
       desc "environment SUBCOMMAND", "Environment related command (use 'canal environment help' to find out more)"
       subcommand "environment", Canals::Cli::Environment
 

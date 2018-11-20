@@ -59,7 +59,11 @@ module Canals
 
     def tunnel_start(tunnel_opts)
       FileUtils.mkdir_p("/tmp/canals")
-      cmd = "ssh -M -S #{socket_file(tunnel_opts)} -o 'ExitOnForwardFailure yes' -fnNT -L #{tunnel_opts.bind_address}:#{tunnel_opts.local_port}:#{tunnel_opts.remote_host}:#{tunnel_opts.remote_port} #{tunnel_opts.proxy}"
+      if (tunnel_opts.socks)
+        cmd = "ssh -M -S #{socket_file(tunnel_opts)} -o 'ExitOnForwardFailure yes' -fnNT -D \"#{tunnel_opts.bind_address}:#{tunnel_opts.local_port}\" #{tunnel_opts.proxy}"
+      else
+        cmd = "ssh -M -S #{socket_file(tunnel_opts)} -o 'ExitOnForwardFailure yes' -fnNT -L #{tunnel_opts.bind_address}:#{tunnel_opts.local_port}:#{tunnel_opts.remote_host}:#{tunnel_opts.remote_port} #{tunnel_opts.proxy}"
+      end
       system(cmd)
       $?
     end

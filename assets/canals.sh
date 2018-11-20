@@ -10,7 +10,7 @@ _canal_complete() {
   # Setup the base level (everything after "canal")
   if [ $COMP_CWORD -eq 1 ]; then
     COMPREPLY=( $(compgen \
-                  -W "adhoc create environment help repo restart session setup start stop update" \
+                  -W "adhoc create environment help repo restart session setup socks start stop update" \
                   -- $cur) )
     return 0
   fi

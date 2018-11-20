@@ -13,6 +13,7 @@ describe Canals::CanalOptions do
   let(:user)  { "user" }
   let(:pem)  { "/tmp/file.pem" }
   let(:adhoc)  { true }
+  let(:socks)  { true }
 
   describe "name" do
     it "contains 'name'" do
@@ -92,6 +93,30 @@ describe Canals::CanalOptions do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port}
       opt = Canals::CanalOptions.new(args)
       expect(opt.adhoc).to eq false
+    end
+  end
+
+  describe "socks" do
+    it "returns 'socks' if 'socks' is availble" do
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port, "hostname" => hostname, "socks" => socks}
+      opt = Canals::CanalOptions.new(args)
+      expect(opt.socks).to eq socks
+    end
+
+    it "returns 'false' for 'socks' if 'socks' isn't given" do
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port, "hostname" => hostname}
+      opt = Canals::CanalOptions.new(args)
+      expect(opt.socks).to eq false
+    end
+
+    it "raises error when 'socks' is true and 'hostname' is not availble" do
+      args = {"name" => name, "local_port" => local_port, "socks" => socks}
+      expect{Canals::CanalOptions.new(args)}.to raise_error(Canals::CanalOptionError)
+    end
+
+    it "raises error when 'socks' is true and 'local_port' is not availble" do
+      args = {"name" => name, "hostname" => hostname, "socks" => socks}
+      expect{Canals::CanalOptions.new(args)}.to raise_error(Canals::CanalOptionError)
     end
   end
 
