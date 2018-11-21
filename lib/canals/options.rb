@@ -77,7 +77,6 @@ module Canals
       vargs = args.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
       raise CanalOptionError.new("Missing option: \"name\" in canal creation") if vargs[:name].nil?
       if vargs[:socks]
-        raise CanalOptionError.new("Missing option: \"hostname\" in canal creation") if vargs[:hostname].nil?
         raise CanalOptionError.new("Missing option: \"local_port\" in canal creation") if vargs[:local_port].nil?
       else
         raise CanalOptionError.new("Missing option: \"remote_host\" in canal creation") if vargs[:remote_host].nil?

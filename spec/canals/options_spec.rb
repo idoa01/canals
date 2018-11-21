@@ -109,11 +109,6 @@ describe Canals::CanalOptions do
       expect(opt.socks).to eq false
     end
 
-    it "raises error when 'socks' is true and 'hostname' is not availble" do
-      args = {"name" => name, "local_port" => local_port, "socks" => socks}
-      expect{Canals::CanalOptions.new(args)}.to raise_error(Canals::CanalOptionError)
-    end
-
     it "raises error when 'socks' is true and 'local_port' is not availble" do
       args = {"name" => name, "hostname" => hostname, "socks" => socks}
       expect{Canals::CanalOptions.new(args)}.to raise_error(Canals::CanalOptionError)
