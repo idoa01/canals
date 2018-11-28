@@ -1,4 +1,5 @@
 require 'pathname'
+require 'fileutils'
 require 'forwardable'
 require 'canals/environment'
 require 'canals/tools/yaml'

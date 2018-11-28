@@ -20,8 +20,8 @@ Gem::Specification.new do |s|
   s.require_path          = "lib"
   s.license               = "MIT"
 
-  s.add_dependency        'thor', '~> 0.19.1'
-  s.add_dependency        'terminal-table', '~> 1.5'
+  s.add_dependency        'thor', '~> 0.20.3'
+  s.add_dependency        'terminal-table', '~> 1.8'
 
   s.add_development_dependency 'rspec', '~> 3.4'
 end

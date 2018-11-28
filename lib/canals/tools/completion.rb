@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'canals'
 require 'canals/tools/assets'
 
