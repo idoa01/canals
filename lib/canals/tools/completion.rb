@@ -21,8 +21,9 @@ module Canals
         source = "source " << cmp_file
 
         rcfile = File.expand_path('.bashrc', ENV['HOME'])
-        return if File.read(rcfile).include? source
+        return false if File.read(rcfile).include? source
         File.open(rcfile, 'a') { |f| f.puts("", "# added by canals gem", "[ -f #{cmp_file} ] && #{source}") }
+        true
       end
 
       def update_completion

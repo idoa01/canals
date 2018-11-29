@@ -19,7 +19,6 @@ module Canals
       desc "completion", "Setup bash completion"
       def completion
         install_completion
-        say "Bash completion script upgraded, use `source #{Canals::Tools::Completion.cmp_file}` to reload it", :red
       end
 
       desc "bind-address", "Setup a global bind address (defaults to 127.0.0.1)"
@@ -32,7 +31,7 @@ module Canals
         def setup_first_environment
           say "We'll start by setting up your first environment", :green
           say "An 'environment' is the server you connect your tunnels through. you can have many environments."
-          say "The first environment is the default one used for new connections (but you can always change this default in the future"
+          say "The first environment is the default one used for new connections (but you can always change this default in the future)"
           say ""
           return unless yes? "Wait, should we setup your first environment?", :green
           opts = {}
@@ -82,8 +81,9 @@ module Canals
         end
 
         def install_completion
-          Canals::Tools::Completion.install_completion
-          say "Shell completion installed.", :green
+          first_time = Canals::Tools::Completion.install_completion
+          say "Shell completion installed.", :green if first_time
+          say "Bash completion script #{first_time ? "installed" : "upgraded"}, use `source #{Canals::Tools::Completion.cmp_file}` to reload it", :red
         end
 
         def check(check_result, message)
