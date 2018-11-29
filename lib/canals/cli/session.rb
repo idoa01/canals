@@ -42,10 +42,17 @@ module Canals
         end
       end
 
-      desc "stop", "Stop the current session"
+      desc "stop", "Stop the current session (stops and removes from session)"
       def stop
         on_all_canals_in_session(:stop) do |canal|
           tstop(canal)
+        end
+      end
+
+      desc "suspend", "Suspend the current session (stops and doesn't remove from session)"
+      def suspend
+        on_all_canals_in_session(:suspend) do |canal|
+          tstop(canal, remove_from_session: false)
         end
       end
 

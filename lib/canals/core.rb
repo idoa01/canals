@@ -24,7 +24,7 @@ module Canals
       pid.to_i
     end
 
-    def stop(tunnel_opts)
+    def stop(tunnel_opts, remove_from_session: true)
       if tunnel_opts.instance_of? String
         if (Canals.repository.has?(tunnel_opts))
           tunnel_opts = Canals.repository.get(tunnel_opts)
@@ -33,7 +33,7 @@ module Canals
         end
       end
       tunnel_close(tunnel_opts)
-      Canals.session.del(tunnel_opts.name)
+      Canals.session.del(tunnel_opts.name) if remove_from_session
     end
 
     def restart(tunnel_opts)
