@@ -1,6 +1,7 @@
-require 'psych'
 require 'pathname'
+require 'fileutils'
 require 'forwardable'
+require 'canals/tools/yaml'
 
 module Canals
   class Session
@@ -65,9 +66,7 @@ module Canals
 
     def save!
       FileUtils.mkdir_p(session_file.dirname)
-      File.open(session_file, 'w') do |file|
-        file.write(Psych.dump(@session))
-      end
+      Canals::Tools::YAML.dump_file(session_file, @session)
     end
 
     private
@@ -80,7 +79,7 @@ module Canals
     def load_session(_session_file)
       valid_file = _session_file && _session_file.exist? && !_session_file.size.zero?
       return [] if !valid_file
-      return Psych.load_file(_session_file)
+      Canals::Tools::YAML.load_file(_session_file)
     end
 
     def basic?(sess)

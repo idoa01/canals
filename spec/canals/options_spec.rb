@@ -1,5 +1,5 @@
 require 'canals/options'
-require 'psych'
+require 'canals/tools/yaml'
 
 describe Canals::CanalOptions do
 
@@ -13,6 +13,7 @@ describe Canals::CanalOptions do
   let(:user)  { "user" }
   let(:pem)  { "/tmp/file.pem" }
   let(:adhoc)  { true }
+  let(:socks)  { true }
 
   describe "name" do
     it "contains 'name'" do
@@ -92,6 +93,25 @@ describe Canals::CanalOptions do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port}
       opt = Canals::CanalOptions.new(args)
       expect(opt.adhoc).to eq false
+    end
+  end
+
+  describe "socks" do
+    it "returns 'socks' if 'socks' is availble" do
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port, "hostname" => hostname, "socks" => socks}
+      opt = Canals::CanalOptions.new(args)
+      expect(opt.socks).to eq socks
+    end
+
+    it "returns 'false' for 'socks' if 'socks' isn't given" do
+      args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port, "hostname" => hostname}
+      opt = Canals::CanalOptions.new(args)
+      expect(opt.socks).to eq false
+    end
+
+    it "raises error when 'socks' is true and 'local_port' is not availble" do
+      args = {"name" => name, "hostname" => hostname, "socks" => socks}
+      expect{Canals::CanalOptions.new(args)}.to raise_error(Canals::CanalOptionError)
     end
   end
 
@@ -210,7 +230,7 @@ describe Canals::CanalOptions do
     it "dumps remote_port as int" do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => '1234'}
       yaml = Canals::CanalOptions.new(args).to_yaml
-      reparsed = Psych.load(yaml)
+      reparsed = Canals::Tools::YAML.load(yaml)
       expect(reparsed[:remote_port]).to eq 1234
       expect(reparsed[:local_port]).to eq 1234
     end
@@ -218,7 +238,7 @@ describe Canals::CanalOptions do
     it "dumps local_port as int" do
       args = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => "4321"}
       yaml = Canals::CanalOptions.new(args).to_yaml
-      reparsed = Psych.load(yaml)
+      reparsed = Canals::Tools::YAML.load(yaml)
       expect(reparsed[:local_port]).to eq 4321
     end
   end

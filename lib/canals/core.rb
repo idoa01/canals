@@ -1,4 +1,5 @@
 require 'open3'
+require 'fileutils'
 
 module Canals
 
@@ -23,7 +24,7 @@ module Canals
       pid.to_i
     end
 
-    def stop(tunnel_opts)
+    def stop(tunnel_opts, remove_from_session: true)
       if tunnel_opts.instance_of? String
         if (Canals.repository.has?(tunnel_opts))
           tunnel_opts = Canals.repository.get(tunnel_opts)
@@ -32,7 +33,7 @@ module Canals
         end
       end
       tunnel_close(tunnel_opts)
-      Canals.session.del(tunnel_opts.name)
+      Canals.session.del(tunnel_opts.name) if remove_from_session
     end
 
     def restart(tunnel_opts)
@@ -59,7 +60,11 @@ module Canals
 
     def tunnel_start(tunnel_opts)
       FileUtils.mkdir_p("/tmp/canals")
-      cmd = "ssh -M -S #{socket_file(tunnel_opts)} -o 'ExitOnForwardFailure yes' -fnNT -L #{tunnel_opts.bind_address}:#{tunnel_opts.local_port}:#{tunnel_opts.remote_host}:#{tunnel_opts.remote_port} #{tunnel_opts.proxy}"
+      if (tunnel_opts.socks)
+        cmd = "ssh -M -S #{socket_file(tunnel_opts)} -o 'ExitOnForwardFailure=yes' -fnNT -D \"#{tunnel_opts.bind_address}:#{tunnel_opts.local_port}\" #{tunnel_opts.proxy}"
+      else
+        cmd = "ssh -M -S #{socket_file(tunnel_opts)} -o 'ExitOnForwardFailure=yes' -fnNT -L #{tunnel_opts.bind_address}:#{tunnel_opts.local_port}:#{tunnel_opts.remote_host}:#{tunnel_opts.remote_port} #{tunnel_opts.proxy}"
+      end
       system(cmd)
       $?
     end

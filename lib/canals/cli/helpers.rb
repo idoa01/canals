@@ -6,11 +6,11 @@ module Canals
   module Cli
     module Helpers
 
-      def tstop(tunnel_opts, silent: false)
+      def tstop(tunnel_opts, remove_from_session: true, silent: false)
         if tunnel_opts.instance_of? String
           tunnel_opts = tunnel_options(tunnel_opts)
         end
-        Canals.stop(tunnel_opts)
+        Canals.stop(tunnel_opts, remove_from_session: remove_from_session)
         say "Tunnel #{tunnel_opts.name.inspect} stopped." unless silent
       end
 

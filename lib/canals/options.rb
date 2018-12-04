@@ -1,14 +1,14 @@
-require 'psych'
+require 'canals/tools/yaml'
 
 module Canals
   CanalOptionError = Class.new StandardError
 
   class CanalOptions
     BIND_ADDRESS = "127.0.0.1"
-    attr_reader :name, :remote_host, :remote_port, :local_port, :env_name, :env, :adhoc
+    attr_reader :name, :remote_host, :remote_port, :local_port, :env_name, :env, :adhoc, :socks
 
     # define setters
-    [:name, :local_port, :adhoc].each do |attribute|
+    [:name, :local_port, :adhoc, :socks].each do |attribute|
       define_method :"#{attribute}=" do |value|
         @args[attribute] = value
         self.instance_variable_set(:"@#{attribute}", value)
@@ -23,6 +23,7 @@ module Canals
       @remote_port = @args[:remote_port]
       @local_port = @args[:local_port]
       @adhoc = @args[:adhoc] || false
+      @socks = @args[:socks] || false
       @env_name = @args[:env]
       @env = Canals.repository.environment(@env_name)
     end
@@ -57,7 +58,7 @@ module Canals
     end
 
     def to_yaml
-      Psych.dump(@args)
+      Canals::Tools::YAML.to_yaml(@args)
     end
 
     def to_hash(mode=:basic)
@@ -67,7 +68,7 @@ module Canals
     end
 
     def exploded_options
-      {bind_address: bind_address, hostname: hostname, user: user, pem: pem, proxy: proxy, adhoc: adhoc}
+      {bind_address: bind_address, hostname: hostname, user: user, pem: pem, proxy: proxy, adhoc: adhoc, socks: socks}
     end
 
     private
@@ -75,8 +76,13 @@ module Canals
     def validate?(args)
       vargs = args.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
       raise CanalOptionError.new("Missing option: \"name\" in canal creation") if vargs[:name].nil?
-      raise CanalOptionError.new("Missing option: \"remote_host\" in canal creation") if vargs[:remote_host].nil?
-      raise CanalOptionError.new("Missing option: \"remote_port\" in canal creation") if vargs[:remote_port].nil?
+      if vargs[:socks]
+        raise CanalOptionError.new("Missing option: \"local_port\" in canal creation") if vargs[:local_port].nil?
+      else
+        raise CanalOptionError.new("Missing option: \"remote_host\" in canal creation") if vargs[:remote_host].nil?
+        raise CanalOptionError.new("Missing option: \"remote_port\" in canal creation") if vargs[:remote_port].nil?
+      end
+
       vargs[:remote_port] = vargs[:remote_port].to_i
       if vargs[:local_port].nil?
         vargs[:local_port] = vargs[:remote_port]

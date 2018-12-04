@@ -32,7 +32,7 @@ module Canals
       method_option :user,         :type => :string, :desc => "The user for the ssh proxy host"
       method_option :bind_address, :type => :string, :desc => "The bind address to connect to"
       def create(name, remote_host, remote_port, local_port=nil)
-        opts = {"name" => name, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}.merge(options)
+        opts = {name: name, remote_host: remote_host, remote_port: remote_port, local_port: local_port}.merge(options)
         opts = Canals::CanalOptions.new(opts)
         Canals.create_tunnel(opts)
         say "Tunnel #{name.inspect} created.", :green
@@ -40,13 +40,13 @@ module Canals
 
       desc 'delete NAME', "Delete an existing tunnel; if tunnel is active, stop it first"
       def delete(name)
-        tunnel = Canals.repository.get(name)
+        tunnel = Canals.repository.get(name.to_sym)
         if tunnel.nil?
           say "couldn't find tunnel #{name.inspect}. try using 'create' instead", :red
           return
         end
         tstop(name, silent: true)
-        Canals.repository.delete(name)
+        Canals.repository.delete(name.to_sym)
         say "Tunnel #{name.inspect} deleted.", :green
       end
 
@@ -59,7 +59,7 @@ module Canals
       method_option :user,         :type => :string, :desc => "The user for the ssh proxy host"
       method_option :bind_address, :type => :string, :desc => "The bind address to connect to"
       def update(name)
-        tunnel = Canals.repository.get(name)
+        tunnel = Canals.repository.get(name.to_sym)
         if tunnel.nil?
           say "couldn't find tunnel #{name.inspect}. try using 'create' instead", :red
           return
@@ -133,6 +133,21 @@ module Canals
         opts = {"adhoc" => true, "remote_host" => remote_host, "remote_port" => remote_port, "local_port" => local_port}.merge(options)
         opts["name"] ||= "adhoc-#{remote_host}-#{remote_port}"
         opts = Canals::CanalOptions.new(opts)
+        tstart(opts)
+      end
+
+
+      desc "socks LOCAL_PORT", "Create and run a socks connection"
+      method_option :name,         :type => :string, :desc => "The name to use for the socks tunnel, if not supplied a template will be generated"
+      method_option :env,          :type => :string, :desc => "The proxy environment to use"
+      method_option :hostname,     :type => :string, :desc => "The proxy host we will use to connect through"
+      method_option :user,         :type => :string, :desc => "The user for the ssh socks host"
+      method_option :bind_address, :type => :string, :desc => "The bind address to connect to"
+      def socks(local_port)
+        opts = {"adhoc" => true, "socks" => true, "local_port" => local_port}.merge(options)
+        opts["name"] ||= "__SOCKS__"
+        opts = Canals::CanalOptions.new(opts)
+        opts.name = "SOCKS-adhoc-#{opts.hostname}-#{local_port}" if opts.name == "__SOCKS__"
         tstart(opts)
       end
 
