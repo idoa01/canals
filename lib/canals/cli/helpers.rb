@@ -18,8 +18,10 @@ module Canals
         if tunnel_opts.instance_of? String
           tunnel_opts = tunnel_options(tunnel_opts)
         end
+        old_pid = tunnel_opts.pid
         pid = Canals.start(tunnel_opts)
         say "Created tunnel #{tunnel_opts.name.inspect} with pid #{pid}. You can access it using '#{tunnel_opts.bind_address}:#{tunnel_opts.local_port}'" unless silent
+        Canals.session.del_by_pid(old_pid) if old_pid
         pid
       rescue Canals::Exception => e
         if tunnel_opts.instance_of? String

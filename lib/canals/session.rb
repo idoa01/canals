@@ -38,6 +38,11 @@ module Canals
       save! if save
     end
 
+    def del_by_pid(pid, save=true)
+      @session.delete_if{ |s| s[:pid] == pid }
+      save! if save
+    end
+
     def get(session_id)
       sess = nil
       case session_id

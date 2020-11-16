@@ -5,7 +5,7 @@ module Canals
 
   class CanalOptions
     BIND_ADDRESS = "127.0.0.1"
-    attr_reader :name, :remote_host, :remote_port, :local_port, :env_name, :env, :adhoc, :socks
+    attr_reader :name, :remote_host, :remote_port, :local_port, :env_name, :env, :adhoc, :socks, :pid
 
     # define setters
     [:name, :local_port, :adhoc, :socks].each do |attribute|
@@ -24,6 +24,7 @@ module Canals
       @local_port = @args[:local_port]
       @adhoc = @args[:adhoc] || false
       @socks = @args[:socks] || false
+      @pid = @args[:pid]
       @env_name = @args[:env]
       @env = Canals.repository.environment(@env_name)
     end
